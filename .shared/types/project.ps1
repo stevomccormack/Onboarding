@@ -6,7 +6,9 @@
 # ------------------------------------------------------------------------------------------------
 class Project {
 
-    [string]$Name
+    [GitProvider]$Provider
+    [string]$Name    
+    [string]$Description
     [string]$Owner
     [string]$Repository
     [string]$HttpsUrl
@@ -21,13 +23,15 @@ class Project {
     [string]$SafePath
     [string]$Origin
     [string]$MainBranch
-    [string]$MergeStrategy
-    [string]$PullStrategy
+    [bool]$FastForward
+    [bool]$UseRebase
 
     Project() {}
 
     Project(
+        [GitProvider]$Provider,
         [string]$Name,
+        [string]$Description,
         [string]$Owner,
         [string]$Repository,
         [string]$HttpsUrl,
@@ -40,10 +44,12 @@ class Project {
         [string]$SafePath,
         [string]$Origin,
         [string]$MainBranch,
-        [string]$MergeStrategy,
-        [string]$PullStrategy
+        [bool]$FastForward,
+        [bool]$UseRebase
     ) {
+        $this.Provider = $Provider
         $this.Name = $Name
+        $this.Description = $Description
         $this.Owner = $Owner
         $this.Repository = $Repository
         $this.HttpsUrl = $HttpsUrl
@@ -58,8 +64,8 @@ class Project {
         $this.SafePath = $SafePath
         $this.Origin = $Origin
         $this.MainBranch = $MainBranch
-        $this.MergeStrategy = $MergeStrategy
-        $this.PullStrategy = $PullStrategy
+        $this.FastForward = $FastForward
+        $this.UseRebase = $UseRebase
     }
 }
 
@@ -70,12 +76,24 @@ class Project {
 function New-Project {
     [CmdletBinding()]
     param(
+        # Provider:
+        # Git provider for the repository.
+        # Example: [GitProvider]::GitHub, [GitProvider]::AzureDevOps
+        [Parameter(Mandatory)]
+        [GitProvider]$Provider,
+
         # Name:
         # Display name for the project.
         # Example: 'Pine Guard Security', 'Visual Studio Code', 'My Amazing Project'
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]$Name,
+
+        # Description:
+        # Short description for the project.
+        [Parameter(Mandatory)]
+        [AllowEmptyString()]
+        [string]$Description = '',
 
         # Owner:
         # Repository owner/organization name.
@@ -147,23 +165,22 @@ function New-Project {
         [ValidateNotNullOrEmpty()]
         [string]$MainBranch = 'main',
 
-        # MergeStrategy:
-        # Default merge strategy.
-        # Example: 'merge', 'rebase', 'squash'
+        # FastForward:
+        # Allow fast-forward merges during pull (git config pull.ff).
+        # $true = only fast-forward, $false = allow non-fast-forward merges
         [Parameter()]
-        [ValidateSet('merge', 'rebase', 'squash')]
-        [string]$MergeStrategy = 'merge',
+        [bool]$FastForward = $false,
 
-        # PullStrategy:
-        # Default pull behavior.
-        # Example: 'merge', 'rebase'
+        # UseRebase:
+        # Use rebase instead of merge during pull (git config pull.rebase).
+        # $true = rebase, $false = merge
         [Parameter()]
-        [ValidateSet('merge', 'rebase')]
-        [string]$PullStrategy = 'merge'
+        [bool]$UseRebase = $false
     )
 
     # Guards
     $nameClean = $Name.Trim()
+    $descriptionClean = $Description.Trim()
     $ownerClean = $Owner.Trim()
     $repoClean = $Repository.Trim()
     $httpsUrlClean = $HttpsUrl.Trim()
@@ -204,7 +221,9 @@ function New-Project {
     $origin = $sshUrlClean  # Use SSH URL for origin
 
     return [Project]::new(
+        $Provider,
         $nameClean,
+        $descriptionClean,
         $ownerClean,
         $repoClean,
         $httpsUrlClean,
@@ -217,8 +236,8 @@ function New-Project {
         $safePath,
         $origin,
         $MainBranch,
-        $MergeStrategy,
-        $PullStrategy
+        $FastForward,
+        $UseRebase
     )
 }
 
@@ -250,6 +269,12 @@ function New-GitHubProject {
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
+        # Description:
+        # Short description for the project.
+        [Parameter()]
+        [AllowEmptyString()]
+        [string]$Description = '',
+
         # LocalPath:
         # Local filesystem path where repository will be cloned.
         # Example: 'C:\Dev\PineGuard', '/home/user/projects/vscode'
@@ -278,19 +303,15 @@ function New-GitHubProject {
         [ValidateNotNullOrEmpty()]
         [string]$MainBranch = 'main',
 
-        # MergeStrategy:
-        # Default merge strategy.
-        # Example: 'merge', 'rebase', 'squash'
+        # FastForward:
+        # Allow fast-forward merges during pull.
         [Parameter()]
-        [ValidateSet('merge', 'rebase', 'squash')]
-        [string]$MergeStrategy = 'merge',
+        [bool]$FastForward = $false,
 
-        # PullStrategy:
-        # Default pull behavior.
-        # Example: 'merge', 'rebase'
+        # UseRebase:
+        # Use rebase instead of merge during pull.
         [Parameter()]
-        [ValidateSet('merge', 'rebase')]
-        [string]$PullStrategy = 'merge'
+        [bool]$UseRebase = $false
     )
 
     # Guards
@@ -310,10 +331,10 @@ function New-GitHubProject {
     $webUrl = "https://github.com/$ownerClean/$repoClean"
     $gitUrl = "https://github.com/$ownerClean/$repoClean.git"
 
-    return New-Project -Name $nameClean -Owner $ownerClean -Repository $repoClean `
+    return New-Project -Provider ([GitProvider]::GitHub) -Name $nameClean -Description $Description -Owner $ownerClean -Repository $repoClean `
         -HttpsUrl $httpsUrl -SshUrl $sshUrl -WebUrl $webUrl -GitUrl $gitUrl `
         -LocalPath $LocalPath -UserName $UserName -UserEmail $UserEmail `
-        -MainBranch $MainBranch -MergeStrategy $MergeStrategy -PullStrategy $PullStrategy
+        -MainBranch $MainBranch -FastForward $FastForward -UseRebase $UseRebase
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -351,6 +372,12 @@ function New-AzureDevOpsProject {
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
+        # Description:
+        # Short description for the project.
+        [Parameter()]
+        [AllowEmptyString()]
+        [string]$Description = '',
+
         # LocalPath:
         # Local filesystem path where repository will be cloned.
         # Example: 'C:\Dev\MyRepo', '/home/user/projects/myrepo'
@@ -379,22 +406,19 @@ function New-AzureDevOpsProject {
         [ValidateNotNullOrEmpty()]
         [string]$MainBranch = 'main',
 
-        # MergeStrategy:
-        # Default merge strategy.
-        # Example: 'merge', 'rebase', 'squash'
+        # FastForward:
+        # Allow fast-forward merges during pull.
         [Parameter()]
-        [ValidateSet('merge', 'rebase', 'squash')]
-        [string]$MergeStrategy = 'merge',
+        [bool]$FastForward = $false,
 
-        # PullStrategy:
-        # Default pull behavior.
-        # Example: 'merge', 'rebase'
+        # UseRebase:
+        # Use rebase instead of merge during pull.
         [Parameter()]
-        [ValidateSet('merge', 'rebase')]
-        [string]$PullStrategy = 'merge'
+        [bool]$UseRebase = $false
     )
 
     # Guards
+    $descriptionClean = $Description.Trim()
     $orgClean = $Organization.Trim()
     $projectClean = $Project.Trim()
     $repoClean = $Repository.Trim()
@@ -413,10 +437,10 @@ function New-AzureDevOpsProject {
     $webUrl = "https://dev.azure.com/$orgClean/$projectClean/_git/$repoClean"
     $gitUrl = "https://dev.azure.com/$orgClean/$projectClean/_git/$repoClean.git"
 
-    return New-Project -Name $nameClean -Owner $orgClean -Repository $repoClean `
+    return New-Project -Provider ([GitProvider]::AzureDevOps) -Name $nameClean -Description $Description -Owner $orgClean -Repository $repoClean `
         -HttpsUrl $httpsUrl -SshUrl $sshUrl -WebUrl $webUrl -GitUrl $gitUrl `
         -LocalPath $LocalPath -UserName $UserName -UserEmail $UserEmail `
-        -MainBranch $MainBranch -MergeStrategy $MergeStrategy -PullStrategy $PullStrategy
+        -MainBranch $MainBranch -FastForward $FastForward -UseRebase $UseRebase
 }
 
 # ------------------------------------------------------------------------------------------------

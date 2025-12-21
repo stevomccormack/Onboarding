@@ -7,12 +7,13 @@ $Projects = [pscustomobject]@{
         -Owner 'stevomccormack' `
         -Repository 'Onboarding' `
         -Name 'Onboarding' `
+        -Description 'PowerShell Onboarding Scripts and Project Structure' `
         -LocalPath (Join-Path 'D:\Steve McCormack\GitHub\@stevomccormack' 'Onboarding') `
         -UserName 'Steve McCormack' `
         -UserEmail 'hello@iamstevo.co' `
         -MainBranch 'main' `
-        -MergeStrategy 'merge' `
-        -PullStrategy 'rebase'
+        -FastForward $false `
+        -UseRebase $true
 }
 
 # -------------------------------------------------------------------------------------------------

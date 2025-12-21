@@ -13,8 +13,14 @@ Write-NewLine
 # ------------------------------------------------------------------------------------------------
 
 # Check if git repository is already initialized
-if (Test-GitRepository -Path $project.LocalPath) {
-    Write-FailMessage -Title "Git Init" -Message "Git repository is already initialized."
+if (Test-GitRepositoryIsInitialized -Path $project.LocalPath) {
+    Write-FatalMessage -Title "Git Init" -Message "Git repository is already initialized."
+    exit 1
+}
+
+# Check if git repository exists
+if (Test-GitRepositoryExists -RepositoryUrl $project.GitUrl) {
+    Write-FatalMessage -Title "Git Init" -Message "Git repository already exists."
     exit 1
 }
 
