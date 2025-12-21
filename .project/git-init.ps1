@@ -1,3 +1,5 @@
+# .project/git-init.ps1
+
 . ".shared\index.ps1"
 
 $project = $Projects.Onboarding # select the project!

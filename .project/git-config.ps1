@@ -1,3 +1,5 @@
+# .project/git-config.ps1
+
 . ".shared\index.ps1"
 
 $project = $Projects.Onboarding # select the project!
@@ -13,7 +15,7 @@ Write-NewLine
 # ------------------------------------------------------------------------------------------------
 
 # Check if git repository is initialized
-if (-not (Test-GitRepositoryIsInitlialized -Path $project.LocalPath)) {
+if (-not (Test-GitRepositoryIsInitialized -Path $project.LocalPath)) {
     Write-FailMessage -Title "Git Init" -Message "Git repository is not initialized. Run 'git init' first."
     exit 1
 }
@@ -42,6 +44,7 @@ Write-Var -Name "git --local config init.defaultBranch" -Value (git config --loc
 Write-Var -Name "git --local config pull.ff" -Value (git config --local pull.ff) -NoIcon
 Write-Var -Name "git --local config pull.rebase" -Value (git config --local pull.rebase) -NoIcon
 Write-Var -Name "git --local config url.'git@github.com:'.insteadOf" -Value (git config --local url.'git@github.com:'.insteadOf) -NoIcon
+Write-NewLine
 
 # ------------------------------------------------------------------------------------------------
 

@@ -1,3 +1,5 @@
+# .shared/variables/projects.ps1
+
 # -------------------------------------------------------------------------------------------------
 # Project Variables
 # -------------------------------------------------------------------------------------------------
@@ -19,6 +21,8 @@ $Projects = [pscustomobject]@{
 # -------------------------------------------------------------------------------------------------
 
 if ($Global.Log.Enabled) {
-    Write-Header "Projects Variables (`$Projects`):"
-    Write-ObjectPathTree -Object $Projects -RootPath '$Projects'
+    Write-Header "`$Projects` Variable:"
+    # Write-ObjectPathTree -Object $Projects -RootPath '$Projects'   
+
+    $Projects.Onboarding | Format-List
 }

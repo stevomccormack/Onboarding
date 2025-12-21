@@ -1,3 +1,5 @@
+# .shared/variables/ssh.ps1
+
 # -------------------------------------------------------------------------------------------------
 # SSH Variables
 # -------------------------------------------------------------------------------------------------
@@ -104,6 +106,6 @@ $SshConfig = [pscustomobject]@{
 # -------------------------------------------------------------------------------------------------
 
 if ($Global.Log.Enabled) {
-    Write-Header "SSH Variables (`$Ssh`):"
-    Write-ObjectPathTree -Object $Ssh -RootPath '$Ssh'
+    Write-Header "`$Ssh` Variables ():"
+    $Ssh | Format-List
 }

@@ -146,12 +146,8 @@ Onboarding/
 ├── .project/                   # Project-specific scripts
 │   ├── git-init.ps1           # Initialize Git repository
 │   └── git-config.ps1         # Configure Git for project
-├── 365/                        # Microsoft 365 automation
-│   └── mailboxes-create.ps1   # Mailbox creation script
-├── azure/                      # Azure automation
-│   └── subscriptions-create.ps1
 ├── dev/                        # Developer environment setup
-│   ├── git-config-global.ps1  # Global Git configuration
+│   ├── git-config.global.ps1  # Global Git configuration
 │   └── ssh-init.ps1           # SSH initialization
 ├── .env.example               # Example environment variables
 ├── .gitignore                 # Git ignore rules
@@ -295,7 +291,7 @@ Write-Var -Name "Project Name" -Value $Projects.Onboarding.Name
 
 ### Environment & Configuration
 
-- **`Load-DotEnv`**: Load environment variables from `.env` file
+- **`Import-DotEnv`**: Load environment variables from `.env` file
 - **`Test-Command`**: Check if a command exists in PATH
 - **`Test-Module`**: Check if a PowerShell module is available
 

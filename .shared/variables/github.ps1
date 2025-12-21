@@ -1,3 +1,5 @@
+# .shared/variables/github.ps1
+
 # -------------------------------------------------------------------------------------------------
 # GitHub Variables
 # -------------------------------------------------------------------------------------------------
@@ -29,6 +31,6 @@ $GitHub = [pscustomobject]@{
 
 if ($Global.Log.Enabled){
 
-    Write-Header "$($GitHub.Name) Variables:"
-    Write-ObjectPathTree -Object $GitHub.Ssh -RootPath '$GitHub'
+    Write-Header "`$GitHub` Variable:"
+    $GitHub | Format-List
 }

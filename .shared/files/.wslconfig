@@ -1,0 +1,52 @@
+# ------------------------------------------------------------------------------------------------
+# WSL2 Configuration
+# ------------------------------------------------------------------------------------------------
+# Global configuration for Windows Subsystem for Linux 2.
+# 
+# Location: %USERPROFILE%\.wslconfig
+# Restart WSL after changes: 
+#   wsl --shutdown
+#   wsl
+#
+# Retrieve system specifications:
+#   systeminfo | Select-String "Total Physical Memory","Processor"
+#   Get-CimInstance -ClassName Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessor
+
+# When WSL/Docker is NOT running:
+#   WSL uses ZERO memory
+#   WSL uses ZERO CPU
+#   All resources are fully available to Windows
+# ------------------------------------------------------------------------------------------------
+
+[wsl2]
+
+# Memory allocation (50% of system RAM recommended for development workloads)
+memory=16GB
+
+# Processor allocation (50% of logical processors)
+processors=10
+
+# Swap file size (should be 25-50% of memory allocation)
+swap=4GB
+
+# Disable page reporting (improves performance, slightly more memory usage)
+pageReporting=false
+
+# Nested virtualization support (for Docker, K8s, etc.)
+nestedVirtualization=true
+
+# Kernel command line parameters
+# - vm.max_map_count: Required for Elasticsearch, OpenSearch, other memory-mapped applications
+kernelCommandLine=sysctl.vm.max_map_count=262144
+
+# Localhost forwarding (access WSL services from Windows via localhost)
+localhostForwarding=true
+
+# DNS tunneling (improves VPN compatibility)
+dnsTunneling=true
+
+# Auto-proxy (inherit Windows proxy settings)
+autoProxy=true
+
+# Firewall integration (WSL respects Windows Firewall rules)
+firewall=true

@@ -1,3 +1,5 @@
+# .shared/variables/onedrive.ps1
+
 # -------------------------------------------------------------------------------------------------
 # OneDrive Variables
 # -------------------------------------------------------------------------------------------------
@@ -18,6 +20,6 @@ $OneDrive = [pscustomobject]@{
 
 if ($Global.Log.Enabled){
 
-    Write-Header "$($OneDrive.Name) Variables:"
-    Write-ObjectPathTree -Object $OneDrive -RootPath '$OneDrive'
+    Write-Header "`$OneDrive` Variable:"
+    $OneDrive | Format-List
 }

@@ -1,4 +1,4 @@
-# ssh.ps1
+# ssh-init.ps1
 
 . ".shared\index.ps1"
 
@@ -180,7 +180,7 @@ Write-OkMessage -Title "SSH Config" -Message "Completed SSH config: $($Ssh.Confi
 # ------------------------------------------------------------------------------------------------
 Write-Header "SSH Backup to OneDrive"
 
-if ($OneDrive.BackupEnabled) {
+if ($Ssh.OneDriveBackupEnabled) {
 
     # Ensure OneDrive directory
     if (-not (Test-EnsureDirectory -Path $OneDrive.SshDir)) { return $false }

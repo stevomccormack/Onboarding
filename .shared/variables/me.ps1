@@ -1,3 +1,5 @@
+# .shared/variables/me.ps1
+
 # -------------------------------------------------------------------------------------------------
 # Identity
 # -------------------------------------------------------------------------------------------------
@@ -49,6 +51,6 @@ $Me = [pscustomobject]@{
 
 if ($Global.Log.Enabled){
 
-    Write-Header "Identity Variables (`$Me`):"
-    Write-ObjectPathTree -Object $Me -RootPath '$Me'
+    Write-Header "`$Me` Variable:"
+    $Me | Format-List
 }

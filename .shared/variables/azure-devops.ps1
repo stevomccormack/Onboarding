@@ -1,3 +1,5 @@
+# .shared/variables/azure-devops.ps1
+
 # -------------------------------------------------------------------------------------------------
 # Azure DevOps Variables
 # -------------------------------------------------------------------------------------------------
@@ -29,6 +31,6 @@ $AzureDevOps = [pscustomobject]@{
 
 if ($Global.Log.Enabled){
 
-    Write-Header "$($AzureDevOps.Name) Variables:"
-    Write-ObjectPathTree -Object $AzureDevOps.Ssh -RootPath '$AzureDevOps'
+    Write-Header "`$AzureDevOps` Variable:"
+    $AzureDevOps | Format-List
 }

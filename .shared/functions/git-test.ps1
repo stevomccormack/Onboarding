@@ -5,7 +5,7 @@
 # Tests if a directory is a valid Git repository by checking for .git directory and validating
 # with git rev-parse. Returns $true if valid repository, $false otherwise.
 # ------------------------------------------------------------------------------------------------
-function Test-GitRepositoryIsInitlialized {
+function Test-GitRepositoryIsInitialized {
     [CmdletBinding()]
     param(
         # Path:

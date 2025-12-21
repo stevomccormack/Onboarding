@@ -7,5 +7,7 @@
 . ".shared\functions\clipboard.ps1"
 # ----------------------------------------------------------------------------------------------------------------------
 . ".shared\functions\ssh.ps1"      # index file for ssh functions
-. ".shared\functions\git-test.ps1" # index file for git-test functions
+. ".shared\functions\git-test.ps1" # git repository testing functions
+. ".shared\functions\git-config.ps1" # git configuration functions
+. ".shared\functions\dotnet-install.ps1" # dotnet installation functions
 # ----------------------------------------------------------------------------------------------------------------------

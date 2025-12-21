@@ -1,3 +1,5 @@
+# .shared/variables/global.ps1
+
 # -------------------------------------------------------------------------------------------------
 # Global Variables
 # NOTE: This file should be loaded first!!
@@ -11,7 +13,8 @@ $Global = [pscustomobject]@{
     DotEnvScope = 'User'
     DotEnvForce = $false # Force reload even if already loaded
     Log = [pscustomobject]@{
-        Enabled  = $false
+        Enabled  = $false  # Enable detailed logging of variables
+        LogPath  = ([System.IO.Path]::Combine($rootPath, '.logs'))
     }
 }
 
@@ -19,6 +22,6 @@ $Global = [pscustomobject]@{
 
 if ($Global.Log.Enabled){
 
-    Write-Header "Global Variables (`$Global`):"
-    Write-ObjectPathTree -Object $Global -RootPath '$Global'
+    Write-Header "`$Global` Variable:"
+    $Global | Format-List
 }

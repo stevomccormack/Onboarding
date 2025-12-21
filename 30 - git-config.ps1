@@ -1,22 +1,37 @@
+# git-config.ps1
+
 . ".shared\index.ps1"
 
 # ------------------------------------------------------------------------------------------------
 
-Write-MastHead "Global Git Configuration"
-Write-Status "Configuring global git settings..."
+Write-MastHead "Git Initialisation"
+Write-Status "Configuring projects..."
 
 # ------------------------------------------------------------------------------------------------
 
-git config --global core.editor "code --wait"              # Set VS Code as default editor
-git config --global core.autocrlf true                     # Line ending handling (Windows)
-git config --global core.longpaths true                    # Long paths support (Windows)
-git config --global credential.helper manager-core         # Credential helper
-git config --global fetch.prune true                       # Auto-cleanup deleted remote branches
-git config --global color.ui auto                          # Colorized output
-git config --global push.default simple                    # Push only current branch
-git config --global push.autoSetupRemote true              # Auto-setup remote on push
-git config --global rebase.autoStash true                  # Auto-stash during rebase
-git config --global rerere.enabled true                    # Reuse recorded conflict resolutions
+# Configure global Git settings
+git config --global core.editor $Git.Editor
+git config --global core.autocrlf $Git.AutoCrlf
+git config --global core.longpaths $Git.LongPaths
+git config --global credential.helper $Git.CredentialHelper
+git config --global fetch.prune $Git.FetchPrune
+git config --global color.ui $Git.ColorUi
+git config --global push.default $Git.PushDefault
+git config --global push.autoSetupRemote $Git.PushAutoSetupRemote
+git config --global rebase.autoStash $Git.RebaseAutoStash
+git config --global rerere.enabled $Git.RerereEnabled
+
+# ------------------------------------------------------------------------------------------------
+
+$Projects.GetAll() | ForEach-Object {
+    $project = $_
+
+    # Safe directories
+    $existingSafeDirs = git config --global --get-all safe.directory 2>$null
+    if ($existingSafeDirs -notcontains $project.LocalPath) {
+        git config --global --add safe.directory $project.LocalPath
+    }
+}
 
 # ------------------------------------------------------------------------------------------------
 
@@ -31,6 +46,10 @@ Write-Var -Name "git --global config push.autoSetupRemote" -Value (git config --
 Write-Var -Name "git --global config rebase.autoStash" -Value (git config --global rebase.autoStash) -NoIcon
 Write-Var -Name "git --global config rerere.enabled" -Value (git config --global rerere.enabled) -NoIcon
 Write-NewLine
+Write-Host "git config --global --get-all safe.directory:`n" -ForegroundColor Green -NoNewLine
+git config --global --get-all safe.directory | ForEach-Object { Write-Host "- $_" }
+Write-NewLine
+
 
 # ------------------------------------------------------------------------------------------------
 

@@ -1,12 +1,12 @@
 # dotenv.ps1
 
 # ------------------------------------------------------------------------------------------------
-# Load-DotEnv:
+# Import-DotEnv:
 # Loads key/value pairs from a .env file into environment variables at the specified scope.
 # Supports lines in the form KEY=VALUE, ignores blanks and comments (#), and unquotes '...' or "..."
 # values. Returns $true if all variables were applied successfully, otherwise $false.
 # ------------------------------------------------------------------------------------------------
-function Load-DotEnv {
+function Import-DotEnv {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         # Path:
