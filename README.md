@@ -511,32 +511,11 @@ For issues, questions, or suggestions:
 
 <div align="center">
 
-<style>
-@keyframes heartbeat {
-  0%, 100% { transform: scale(1); }
-  10%, 30% { transform: scale(1.1); }
-  20%, 40% { transform: scale(1); }
-}
-
-.heart {
-  display: inline-block;
-  color: #e74c3c;
-  animation: heartbeat 2s ease-in-out infinite;
-}
-</style>
-
-**Made with <span class="heart">❤️</span> by [Steve McCormack](https://github.com/stevomccormack)**
+**Made with ❤️ by [Steve McCormack](https://github.com/stevomccormack)**
 
 ⭐ Star this repository if you find it helpful!
 
 </div>
-$Projects.Onboarding.LocalPath
-$Projects.Onboarding.MainBranch
-```
-
----
-
-## 💡 Usage Examples
 
 ### SSH Configuration
 
