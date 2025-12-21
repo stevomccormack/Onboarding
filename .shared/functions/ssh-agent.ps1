@@ -129,3 +129,41 @@ function Test-EnsureSshAgent {
         return $false
     }
 }
+
+# ------------------------------------------------------------------------------------------------
+# Clear-SshAgentKeys:
+# Removes all SSH keys from the ssh-agent.
+# Returns $true on success, $false on failure.
+# ------------------------------------------------------------------------------------------------
+function Clear-SshAgentKeys {
+    [CmdletBinding()]
+    param ()
+
+    # Guards
+    if (-not (Test-Command -Name 'ssh-add')) {
+        Write-WarnMessage -Title "ssh-add missing" -Message "Cannot clear SSH agent keys"
+        return $false
+    }
+
+    Write-StatusMessage -Title "SSH Agent" -Message "Removing all keys from agent"
+    Write-Host "ssh-add -D" -ForegroundColor Cyan
+
+    try {
+        $output = & ssh-add -D 2>&1
+        $exit   = $LASTEXITCODE
+
+        if ($exit -eq 0) {
+            Write-OkMessage -Title "SSH Agent" -Message "All keys removed from agent"
+            return $true
+        }
+
+        Write-FailMessage -Title "ssh-add -D failed" -Message "Exit $exit"
+        if ($output) { Write-Warn $output }
+        return $false
+    }
+    catch {
+        Write-FailMessage -Title "SSH Agent" -Message "Failed to clear keys"
+        Write-Warn $_.Exception.Message
+        return $false
+    }
+}

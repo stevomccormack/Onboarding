@@ -26,8 +26,9 @@ git init --initial-branch=$($project.MainBranch)
 # Stage and commit files
 git add .
 git commit -m "Draft: PowerShell onboarding scripts
-- Added project structure and shared functions
+- Added project structure and shared functions, types and variables
 - Configured repository with .gitignore
+- Added initial scripts for environment setup
 - Ready for GitHub integration"
 
 # Push to repository

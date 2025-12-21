@@ -33,7 +33,7 @@ if ($Ssh.BackupEnabled) {
     Write-StatusMessage -Title "SSH Directory" -Message "Backing up $($Ssh.Root)"
     $sshBackupDirName = ".ssh.bak.$((Get-Date).ToString('yyyyMMdd_HHmmss'))"
     $sshBackupDestPath = [System.IO.Path]::Combine($HOME, $sshBackupDirName)
-    New-BackupDirectory -Path $Ssh.Root -DestinationPath $sshBackupDestPath | Out-Null
+    New-BackupDirectory -SourcePath $Ssh.Root -DestinationPath $sshBackupDestPath | Out-Null
     
     Write-OkMessage -Title "SSH Directory" -Message "Backed up to $sshBackupDestPath"
 }
@@ -70,6 +70,20 @@ if ($Ssh.UseKnownHosts) {
 }
 else {
     Write-StatusMessage -Title "SSH Known Hosts" -Message "Skipped: known_hosts configuration (not enabled)"
+}
+
+# ------------------------------------------------------------------------------------------------
+# SSH Agent: clear all existing keys if enabled
+# ------------------------------------------------------------------------------------------------
+if ($Ssh.UseSshAgent) {
+    if ($Ssh.ClearSshAgentKeys) {
+        if (Clear-SshAgentKeys  ) {
+            Write-OkMessage -Title "SSH Agent" -Message "Cleared existing keys from ssh-agent"
+        }
+        else {
+            Write-WarnMessage -Title "SSH Agent" -Message "Failed to clear existing keys from ssh-agent"
+        }
+    }
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -134,7 +148,7 @@ foreach ($p in @($sshProfiles)) {
     # Debug SSH Connection
     if ($Ssh.DebugConnection) {
         Write-StatusMessage -Title "SSH Debug" -Message "Debugging SSH connection to host name $($p.HostName)"
-        Test-SshDebug -HostName $p.HostName -UserName 'git' -IdentityFilePath $p.KeyFilePath -Description $p.HostAlias | Out-Null
+        Test-SshDebug -HostName $p.HostName -UserName 'git' -IdentityFilePath $p.KeyFilePath | Out-Null
     }
 }
 
@@ -179,7 +193,7 @@ if ($OneDrive.BackupEnabled) {
     # Backup .ssh to OneDrive
     Write-StatusMessage -Title "OneDrive" -Message "Backing up SSH to OneDrive"
     $oneDriveBackupDestPath = [System.IO.Path]::Combine($OneDrive.SshDir, "$((Get-Date).ToString('yyyyMMdd_HHmmss')).bak")
-    New-BackupDirectory -Path $Ssh.Root -DestinationPath $oneDriveBackupDestPath | Out-Null
+    New-BackupDirectory -SourcePath $Ssh.Root -DestinationPath $oneDriveBackupDestPath | Out-Null
 
     # Open in Explorer
     if ($OneDrive.OpenInExplorer) {

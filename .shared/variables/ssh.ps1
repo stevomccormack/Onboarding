@@ -18,6 +18,7 @@ $Ssh = [pscustomobject]@{
     ClearEnabled            = $true                # Whether to clear existing SSH directory contents
     OpenInExplorer          = $true                # Whether to open the SSH directory in Explorer after setup
     UseSshAgent             = $true                # Whether to use the SSH agent for key management
+    ClearSshAgentKeys       = $true                # Whether to remove all existing keys from the SSH agent before adding new keys
     RegisterProviderKeys    = $true                # Whether to register SSH keys with providers (GitHub, ADO)
     TestConnection          = $true                # Whether to test SSH connection after setup
     DebugConnection         = $true                # Whether to run an interactive SSH debug session after setup
