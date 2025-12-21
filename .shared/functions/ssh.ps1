@@ -1,0 +1,7 @@
+. ".shared\functions\ssh-core.ps1"
+. ".shared\functions\ssh-utils.ps1"
+. ".shared\functions\ssh-keygen.ps1"
+. ".shared\functions\ssh-config.ps1"
+. ".shared\functions\ssh-knownhosts.ps1"
+. ".shared\functions\ssh-agent.ps1"
+. ".shared\functions\ssh-test.ps1"
