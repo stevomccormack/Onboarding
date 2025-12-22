@@ -1,4 +1,4 @@
-# windows-update.ps1
+# 03 - ms-windows-update.ps1
 
 # ------------------------------------------------------------------------------------------------
 # Windows Update
@@ -16,8 +16,6 @@
 # - Internet connection
 # ------------------------------------------------------------------------------------------------
 
-. ".shared\index.ps1"
-
 Write-MastHead "Windows Update"
 
 # ------------------------------------------------------------------------------------------------
@@ -34,7 +32,7 @@ Install-Module -Name PSWindowsUpdate -Repository PSGallery -Force -Scope Current
 Write-Ok "Installed PSWindowsUpdate module"
 
 # ------------------------------------------------------------------------------------------------
-# Check for available Windows updates.
+# Check for available Windows updates
 # ------------------------------------------------------------------------------------------------
 
 Write-Status "Checking for available Windows updates (may take some time)..."
@@ -49,7 +47,7 @@ Write-Status "Available Windows Updates:"
 $AvailableUpdates | Format-Table -Property Title, Size, Status -AutoSize
 
 # ------------------------------------------------------------------------------------------------
-# Download and install all available Windows updates.
+# Download and install all available Windows updates
 # ------------------------------------------------------------------------------------------------
 if ($AvailableUpdates.Count -gt 0) {
     Write-Status "Installing available updates..."
@@ -58,7 +56,7 @@ if ($AvailableUpdates.Count -gt 0) {
 }
 
 # ------------------------------------------------------------------------------------------------
-# List Windows update history.
+# List Windows update history
 # ------------------------------------------------------------------------------------------------
 # Get-WUHistory
 

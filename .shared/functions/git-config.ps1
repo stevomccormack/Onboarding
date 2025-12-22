@@ -1,4 +1,4 @@
-# git-config.ps1
+# .shared/functions/git-config.ps1
 
 # ------------------------------------------------------------------------------------------------
 # New-GitSafeDirectory:

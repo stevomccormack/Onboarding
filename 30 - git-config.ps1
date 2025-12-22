@@ -1,4 +1,4 @@
-# git-config.ps1
+# 30 - git-config.ps1
 
 . ".shared\index.ps1"
 

@@ -1,4 +1,4 @@
-# ssh-config.ps1
+# .shared/functions/ssh-config.ps1
 
 # ------------------------------------------------------------------------------------------------
 # New-SshHostConfigBlock:

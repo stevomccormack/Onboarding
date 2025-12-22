@@ -1,15 +1,6 @@
-# environment-wsl.ps1
+# 51 - wsl.ps1
 
-# --------------------------------------------------------------------------------------------------------------------------------
-# Setup Variables
-# --------------------------------------------------------------------------------------------------------------------------------
-
-# environment
-$reposDir = [System.Environment]::GetEnvironmentVariable("TRIIYO-REPOS")
-
-# config
-$wslConfigSourcePath = "$reposDir\onboarding\etc\config\.wslconfig"
-$wslConfigTargetPath = "$env:USERPROFILE\.wslconfig"
+. ".shared\index.ps1"
 
 # --------------------------------------------------------------------------------------------------------------------------------
 
@@ -59,7 +50,7 @@ systeminfo | find "System Type" # e.g. x64-based PC
 # --------------------------------------------------------------------------------------------------------------------------------
 
 # config
-Copy-Item -Path $wslConfigSourcePath -Destination $wslConfigTargetPath -Force
+Copy-Item -Path $Wsl.ConfigSourcePath -Destination $Wsl.ConfigTargetPath -Force
 wsl --shutdown
 wsl
 

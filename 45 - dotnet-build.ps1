@@ -1,4 +1,4 @@
-# 45 - dotnet-build-repos.ps1
+# 45 - dotnet-build.ps1
 
 . ".shared\index.ps1"
 
@@ -7,16 +7,14 @@
 Write-MastHead ".NET Build Repositories"
 
 # ------------------------------------------------------------------------------------------------
-# Build All Solutions
-# ------------------------------------------------------------------------------------------------
+# Build All Repositories
 # Finds and builds all .NET solutions in the repositories directory.
-# Set TRIIYO_REPOS environment variable to your repositories root path.
 # ------------------------------------------------------------------------------------------------
 
-$reposDir = $env:TRIIYO_REPOS
+$reposDir = ""
 
 if ([string]::IsNullOrWhiteSpace($reposDir)) {
-    Write-FailMessage -Title "TRIIYO_REPOS" -Message "Environment variable not set"
+    Write-FailMessage -Title "" -Message "Environment variable not set"
     exit 1
 }
 

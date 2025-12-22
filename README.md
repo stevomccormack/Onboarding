@@ -105,24 +105,30 @@ If successful, you'll see variables and modules loaded automatically.
 # 1. Load environment
 . .\.shared\index.ps1
 
-# 2. Update Windows (requires admin)
-.\01 - ms-windows-update.ps1
+# 2. Check system information
+.\01 - system.ps1
 
-# 3. Install CLI tools
+# 3. Update Active Directory policies (domain-joined machines)
+.\02 - ms-active-directory.ps1
+
+# 4. Update Windows (requires admin)
+.\03 - ms-windows-update.ps1
+
+# 5. Install CLI tools
 .\10 - cli-install.ps1
 
-# 4. Configure SSH
+# 6. Configure SSH
 .\20 - ssh-init.ps1
 
-# 5. Configure Git
+# 7. Configure Git
 .\30 - git-config.ps1
 
-# 6. Install .NET SDKs
+# 8. Install .NET SDKs
 .\41 - dotnet-install.ps1
 .\42 - dotnet-tools.ps1
 .\43 - dotnet-workloads.ps1
 
-# 7. Configure WSL (if using Docker)
+# 9. Configure WSL (if using Docker)
 .\51 - wsl.ps1
 ```
 
@@ -176,8 +182,9 @@ Onboarding/
 │   ├── git-init.ps1                # Initialize Git repository
 │   └── git-config.ps1              # Configure local Git settings
 │
-├── 00 - ms-active-directory.ps1    # Force AD Group Policy refresh
-├── 01 - ms-windows-update.ps1      # Install Windows updates
+├── 01 - system.ps1                 # Display comprehensive system information
+├── 02 - ms-active-directory.ps1    # Force AD Group Policy refresh
+├── 03 - ms-windows-update.ps1      # Install Windows updates
 ├── 10 - cli-install.ps1            # Install CLI tools (Git, Node, Python, etc.)
 ├── 20 - ssh-init.ps1               # Complete SSH setup (keys, agent, config)
 ├── 30 - git-config.ps1             # Configure Git globally
@@ -186,7 +193,8 @@ Onboarding/
 ├── 43 - dotnet-workloads.ps1       # Install workloads (Aspire, MAUI, WASM)
 ├── 44 - dotnet-dev-certs.ps1       # Configure HTTPS dev certificates
 ├── 44 - dotnet-nuget.ps1           # Manage NuGet sources
-├── 45 - dotnet-build-repos.ps1     # Build all .NET solutions in repos directory
+├── 45 - dotnet-build.ps1           # Build all .NET solutions in repos directory
+├── 46 - dotnet-ef.ps1              # Install and configure Entity Framework tools
 ├── 51 - wsl.ps1                    # Copy WSL config to user profile
 ├── 52 - docker-wsl-reinstall.ps1   # Reinstall Docker Desktop with WSL2
 │
@@ -303,10 +311,11 @@ $Projects = [pscustomobject]@{
 
 ### System Management
 
-| Script                         | Description                                              |
-| ------------------------------ | -------------------------------------------------------- |
-| `00 - ms-active-directory.ps1` | Force immediate Group Policy refresh (`gpupdate /force`) |
-| `01 - ms-windows-update.ps1`   | Check and install Windows updates using PSWindowsUpdate  |
+| Script                         | Description                                                       |
+| ------------------------------ | ----------------------------------------------------------------- |
+| `01 - system.ps1`              | Display comprehensive system information (CPU, RAM, GPU, storage) |
+| `02 - ms-active-directory.ps1` | Force immediate Group Policy refresh (`gpupdate /force`)          |
+| `03 - ms-windows-update.ps1`   | Check and install Windows updates using PSWindowsUpdate           |
 
 ### Development Tools
 
@@ -323,14 +332,15 @@ $Projects = [pscustomobject]@{
 
 ### .NET Development
 
-| Script                        | Description                                             |
-| ----------------------------- | ------------------------------------------------------- |
-| `41 - dotnet-install.ps1`     | Install .NET SDKs (versions defined in variables)       |
-| `42 - dotnet-tools.ps1`       | Install global tools (EF, diagnostics, code generators) |
-| `43 - dotnet-workloads.ps1`   | Install workloads (Aspire, MAUI, WebAssembly)           |
-| `44 - dotnet-dev-certs.ps1`   | Configure HTTPS development certificates                |
-| `44 - dotnet-nuget.ps1`       | Manage NuGet package sources                            |
-| `45 - dotnet-build-repos.ps1` | Build all solutions in `$env:TRIIYO_REPOS` directory    |
+| Script                      | Description                                             |
+| --------------------------- | ------------------------------------------------------- |
+| `41 - dotnet-install.ps1`   | Install .NET SDKs (versions defined in variables)       |
+| `42 - dotnet-tools.ps1`     | Install global tools (EF, diagnostics, code generators) |
+| `43 - dotnet-workloads.ps1` | Install workloads (Aspire, MAUI, WebAssembly)           |
+| `44 - dotnet-dev-certs.ps1` | Configure HTTPS development certificates                |
+| `44 - dotnet-nuget.ps1`     | Manage NuGet package sources                            |
+| `45 - dotnet-build.ps1`     | Build all defined solutions                             |
+| `46 - dotnet-ef.ps1`        | Install and configure Entity Framework Core tools       |
 
 ### WSL & Docker
 
@@ -398,9 +408,11 @@ $Projects = [pscustomobject]@{
 
 ### .NET Management
 
-| Function                  | Description                           |
-| ------------------------- | ------------------------------------- |
-| `Get-DotNetInstallScript` | Download official .NET install script |
+| Function                          | Description                                 |
+| --------------------------------- | ------------------------------------------- |
+| `New-DownloadDotNetInstallScript` | Download official .NET install script       |
+| `New-DownloadChocoInstallScript`  | Download official Chocolatey install script |
+| `Install-Chocolatey`              | Install Chocolatey package manager          |
 
 ### Microsoft 365 (Optional)
 

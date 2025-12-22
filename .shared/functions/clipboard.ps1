@@ -1,4 +1,4 @@
-# clipboard.ps1
+# .shared/functions/clipboard.ps1
 
 # ------------------------------------------------------------------------------------------------
 # Copy-FileToClipboard:

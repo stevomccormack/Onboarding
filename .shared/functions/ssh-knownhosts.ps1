@@ -1,4 +1,4 @@
-# ssh-knownhosts.ps1
+# .shared/functions/ssh-knownhosts.ps1
 
 # ------------------------------------------------------------------------------------------------
 # Test-EnsureSshKnownHosts:

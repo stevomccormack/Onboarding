@@ -1,4 +1,4 @@
-# git-test.ps1
+# .shared/functions/git-test.ps1
 
 # ------------------------------------------------------------------------------------------------
 # Test-GitRepositoryIsInitialized:

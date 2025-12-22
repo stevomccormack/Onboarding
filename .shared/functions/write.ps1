@@ -1,4 +1,4 @@
-# write.ps1
+# .shared/functions/write.ps1
 
 # ------------------------------------------------------------------------------------------------
 # Resolve-WriteIcon:
@@ -104,6 +104,45 @@ function Write-Header {
     $line = ($sepClean * $SeparatorLength)
 
     Write-Host "`n$line" -ForegroundColor $ForegroundColor
+    Write-Host $textClean -ForegroundColor $ForegroundColor
+    Write-Host "$line" -ForegroundColor $ForegroundColor
+}
+
+# ------------------------------------------------------------------------------------------------
+# Write-StatusHeader:
+# Writes a simple status line (no icon).
+# ------------------------------------------------------------------------------------------------
+function Write-StatusHeader {
+    [CmdletBinding()]
+    param (
+        # Text:
+        # Header text to display.
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Text,
+
+        # ForegroundColor:
+        # Color for header text and separators.
+        [Parameter()]
+        [ConsoleColor]$ForegroundColor = 'Yellow',
+
+        # Separator:
+        # Separator character repeated for the header border.
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$Separator = '-'
+    )
+
+    # separatorLength:
+    $separatorLength = $Text.Length
+
+    # Guards
+    $textClean = $Text.Trim()
+    $sepClean = $Separator.Trim()
+    $line = ($sepClean * $separatorLength)
+
+    Write-NewLine
+    # Write-Host "$line" -ForegroundColor $ForegroundColor
     Write-Host $textClean -ForegroundColor $ForegroundColor
     Write-Host "$line" -ForegroundColor $ForegroundColor
 }
@@ -604,7 +643,7 @@ function Write-Var {
         # NameColor:
         # Color for name text.
         [Parameter()]
-        [ConsoleColor]$NameColor = 'Green',
+        [ConsoleColor]$NameColor = 'Cyan',
 
         # ValueColor:
         # Color for value text.
@@ -625,7 +664,7 @@ function Write-Var {
     # Guards
     $nameClean = $Name.Trim()
 
-    $icon = Resolve-WriteIcon -Icon '✅' -NoIcon:$NoIcon
+    $icon = Resolve-WriteIcon -Icon '💠' -NoIcon:$NoIcon
 
     Write-Host "$icon$($nameClean): " -ForegroundColor $NameColor -NoNewline
     Write-Host "$Value" -ForegroundColor $ValueColor -NoNewline:$NoNewLine
