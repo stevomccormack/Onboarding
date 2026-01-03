@@ -1,5 +1,7 @@
 # 01 - system.ps1
 
+. ".shared\index.ps1"
+
 # ------------------------------------------------------------------------------------------------
 # System Information
 # Get comprehensive system information including hardware, architecture, and specifications

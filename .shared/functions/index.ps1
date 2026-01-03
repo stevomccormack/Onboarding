@@ -10,5 +10,6 @@
 . ".shared\functions\git-test.ps1" # git repository testing functions
 . ".shared\functions\git-config.ps1" # git configuration functions
 . ".shared\functions\dotnet-install.ps1" # dotnet installation functions
+. ".shared\functions\dotnet-project.ps1" # dotnet project functions
 . ".shared\functions\choco-install.ps1" # chocolatey installation functions
 # ----------------------------------------------------------------------------------------------------------------------

@@ -19,7 +19,7 @@ function Test-EnsureDirectory {
     if (Test-Path -LiteralPath $Path -PathType Container) {
         Write-OkMessage -Title "Directory exists" -Message $Path
         return $true
-    }
+    }   
 
     try {
         New-Item -ItemType Directory -Path $Path -Force -ErrorAction Stop | Out-Null

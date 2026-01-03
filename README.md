@@ -154,31 +154,32 @@ If successful, you'll see variables and modules loaded automatically.
 
 ```
 Onboarding/
-├── .shared/                         # Shared modules and configuration
-│   ├── files/                       # Configuration file templates
+├── .shared/                        # Shared modules and configuration
+│   ├── files/                      # Configuration file templates
 │   │   ├── .gitconfig              # Git global configuration template
 │   │   ├── .wslconfig              # WSL2 configuration (16GB RAM, 10 CPUs)
 │   │   └── dotnet-install.ps1      # Cached .NET install script
-│   ├── functions/                   # Reusable PowerShell functions
+│   ├── functions/                  # Reusable PowerShell functions
 │   │   ├── write.ps1               # Console output (MastHead, Status, OK, Fail)
 │   │   ├── dotenv.ps1              # Environment variable loader (.env support)
 │   │   ├── ssh-*.ps1               # SSH management (keygen, agent, config, test)
 │   │   ├── git-*.ps1               # Git operations (safe.directory, test)
 │   │   ├── dotnet-install.ps1      # .NET install script downloader
+│   │   ├── dotnet-project.ps1      # .NET project (.csproj) helpers
 │   │   └── ...                     # Other utilities
-│   ├── types/                       # PowerShell classes and enums
+│   ├── types/                      # PowerShell classes and enums
 │   │   ├── project.ps1             # Project class definition
 │   │   ├── provider.ps1            # GitProvider enum (GitHub, AzureDevOps)
 │   │   └── ssh.ps1                 # SshProfile class
-│   ├── variables/                   # Global configuration variables
+│   ├── variables/                  # Global configuration variables
 │   │   ├── global.ps1              # Global settings (logging, paths)
 │   │   ├── ssh.ps1                 # SSH profiles (GitHub, Azure DevOps)
 │   │   ├── projects.ps1            # Project definitions
 │   │   ├── dotnet.ps1              # .NET versions, tools, workloads
 │   │   └── wsl.ps1                 # WSL configuration paths
-│   └── index.ps1                    # Main loader (loads all shared resources)
+│   └── index.ps1                   # Main loader (loads all shared resources)
 │
-├── .project/                        # Project-specific automation
+├── .project/                       # Project-specific automation
 │   ├── git-init.ps1                # Initialize Git repository
 │   └── git-config.ps1              # Configure local Git settings
 │
@@ -414,14 +415,14 @@ $Projects = [pscustomobject]@{
 | `New-DownloadChocoInstallScript`  | Download official Chocolatey install script |
 | `Install-Chocolatey`              | Install Chocolatey package manager          |
 
-### Microsoft 365 (Optional)
+<!-- ### Microsoft 365 (Optional)
 
 | Function                | Description                  |
 | ----------------------- | ---------------------------- |
 | `Test-365MailboxExists` | Check if M365 mailbox exists |
 | `New-365Mailbox`        | Create new user mailbox      |
 | `New-365SharedMailbox`  | Create new shared mailbox    |
-| `New-365MailboxAlias`   | Add email alias to mailbox   |
+| `New-365MailboxAlias`   | Add email alias to mailbox   | -->
 
 ---
 
