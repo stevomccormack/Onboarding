@@ -1,6 +1,18 @@
 # .shared/functions/write.ps1
 
 # ------------------------------------------------------------------------------------------------
+# ANSI Escape Sequences
+# ------------------------------------------------------------------------------------------------
+$Ansi = [pscustomobject]@{
+    Esc       = [char]27
+    Bold      = "$([char]27)[1m"
+    Dim       = "$([char]27)[2m"
+    Italic    = "$([char]27)[3m"
+    Underline = "$([char]27)[4m"
+    Reset     = "$([char]27)[0m"
+}
+
+# ------------------------------------------------------------------------------------------------
 # Resolve-WriteIcon:
 # Returns the requested icon + trailing space, or an empty string when -NoIcon is specified.
 # ------------------------------------------------------------------------------------------------
@@ -23,7 +35,7 @@ function Resolve-WriteIcon {
     $iconClean = $Icon.Trim()
     if ($NoIcon.IsPresent) { return '' }
 
-    return "$iconClean "
+    return "$iconClean  "
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -62,9 +74,9 @@ function Write-MastHead {
     $sepClean = $Separator.Trim()
     $line = ($sepClean * $SeparatorLength)
 
-    Write-Host "`n`n# $line" -ForegroundColor $ForegroundColor
-    Write-Host "# $textClean" -ForegroundColor $ForegroundColor
-    Write-Host "# $line`n" -ForegroundColor $ForegroundColor
+    Write-Host "`n`n$($Ansi.Bold)# $line$($Ansi.Reset)" -ForegroundColor $ForegroundColor
+    Write-Host "$($Ansi.Bold)# $textClean$($Ansi.Reset)" -ForegroundColor $ForegroundColor
+    Write-Host "$($Ansi.Bold)# $line`n$($Ansi.Reset)" -ForegroundColor $ForegroundColor
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -103,9 +115,9 @@ function Write-Header {
     $sepClean = $Separator.Trim()
     $line = ($sepClean * $SeparatorLength)
 
-    Write-Host "`n$line" -ForegroundColor $ForegroundColor
-    Write-Host $textClean -ForegroundColor $ForegroundColor
-    Write-Host "$line" -ForegroundColor $ForegroundColor
+    Write-Host "`n$($Ansi.Bold)$line$($Ansi.Reset)" -ForegroundColor $ForegroundColor
+    Write-Host "$($Ansi.Bold)$textClean$($Ansi.Reset)" -ForegroundColor $ForegroundColor
+    Write-Host "$($Ansi.Bold)$line$($Ansi.Reset)" -ForegroundColor $ForegroundColor
 }
 
 # ------------------------------------------------------------------------------------------------

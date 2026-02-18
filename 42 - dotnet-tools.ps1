@@ -26,16 +26,24 @@ if ($DotNet.Tools.Count -eq 0) {
     Write-InfoMessage -Title "Tools" -Message "No tools configured"
 }
 else {
+    $existingTools = dotnet tool list --global 2>$null
+
     foreach ($tool in $DotNet.Tools) {
         Write-Header "Installing: $tool"
-        
+
+        # Check if tool already exists by name
+        if ($existingTools -match [regex]::Escape($tool)) {
+            Write-InfoMessage -Title $tool -Message "Already installed"
+            continue
+        }
+
         dotnet tool install --global $tool
         
         if ($LASTEXITCODE -eq 0) {
             Write-OkMessage -Title $tool -Message "Installed"
         }
         else {
-            Write-InfoMessage -Title $tool -Message "Already installed or failed"
+            Write-FailMessage -Title $tool -Message "Failed to install"
         }
     }
 }

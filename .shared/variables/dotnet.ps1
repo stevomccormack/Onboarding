@@ -23,6 +23,11 @@ $DotNet = [pscustomobject]@{
         @{ Channel = '10.0'; Type = 'sdk' }            # .NET 10 LTS (preview/latest)
     )
     
+    # NuGet sources to configure
+    NugetSources = @(
+        @{ Name = 'nuget.org';  Source = 'https://api.nuget.org/v3/index.json' }
+    )
+    
     # Workloads to install (requires SDK)
     Workloads = @(
         'aspire'                                       # .NET Aspire - Cloud-native orchestration
@@ -47,7 +52,7 @@ $DotNet = [pscustomobject]@{
         'dotnet-reportgenerator-globaltool'          # Report Generator - Code coverage reports
         'dotnet-dev-certs'                           # Dev Certs - HTTPS development certificates
         'dotnet-serve'                               # Serve - Simple HTTP file server
-        'httprepl'                                   # HTTP REPL - Interactive HTTP client for testing APIs
+        # 'httprepl'                                   # HTTP REPL - Interactive HTTP client for testing APIs
         # 'microsoft.tye'                            # Tye - Microservices development orchestration
         # 'dotnet-stryker'                           # Stryker - Mutation testing
         # 'upgrade-assistant'                        # Upgrade Assistant - Migrate projects to latest .NET
