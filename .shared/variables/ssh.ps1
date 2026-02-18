@@ -21,7 +21,7 @@ $Ssh = [pscustomobject]@{
     OpenInExplorer          = $true                # Whether to open the SSH directory in Explorer after setup
     UseSshAgent             = $true                # Whether to use the SSH agent for key management
     ClearSshAgentKeys       = $true                # Whether to remove all existing keys from the SSH agent before adding new keys
-    RegisterProviderKeys    = $true                # Whether to register SSH keys with providers (GitHub, ADO)
+    AutoCreateProviderKeys  = $false               # Whether to register SSH keys with providers (GitHub, ADO)
     TestConnection          = $true                # Whether to test SSH connection after setup
     DebugConnection         = $true                # Whether to run an interactive SSH debug session after setup
 
@@ -42,40 +42,12 @@ $Ssh = [pscustomobject]@{
         AzureDevOps = (& New-SshProfile `
             -Provider ([GitProvider]::AzureDevOps) `
             -Org 'stevomccormack' `
-            -Email 'stevomccormack@live.com' `
+            -Email 'hello@iamstevo.co' `
             -AccessToken $Env:STEVE_AZURE_DEVOPS_PAT `
             -HostAlias "$($AzureDevOps.Alias.ToLower())-stevomccormack" `
             -HostName "$($AzureDevOps.Ssh.Host)" `
             -KeyType $AzureDevOps.Ssh.KeyType `
             -KeyPrefix "$($AzureDevOps.Alias.ToLower())_stevomccormack" `
-            -SshRootPath $sshRootPath `
-            -KeyPassphrase '' `
-            -ForceNewKey $false)
-    }
-
-    MWeb = [pscustomobject]@{
-        GitHub = (& New-SshProfile `
-            -Provider ([GitProvider]::GitHub) `
-            -Org 'mwebsolutions' `
-            -Email 'steve@mweb.co' `
-            -AccessToken $Env:MWEB_GITHUB_PAT `
-            -HostAlias "$($GitHub.Alias.ToLower())-mwebsolutions" `
-            -HostName "$($GitHub.Ssh.Host)" `
-            -KeyType $GitHub.Ssh.KeyType `
-            -KeyPrefix "$($GitHub.Alias.ToLower())_mwebsolutions" `
-            -SshRootPath $sshRootPath `
-            -KeyPassphrase '' `
-            -ForceNewKey $false)
-
-        AzureDevOps = (& New-SshProfile `
-            -Provider ([GitProvider]::AzureDevOps) `
-            -Org 'mwebsolutions' `
-            -Email 'steve@mweb.co' `
-            -AccessToken $Env:MWEB_AZURE_DEVOPS_PAT `
-            -HostAlias "$($AzureDevOps.Alias.ToLower())-mwebsolutions" `
-            -HostName "$($AzureDevOps.Ssh.Host)" `
-            -KeyType $AzureDevOps.Ssh.KeyType `
-            -KeyPrefix "$($AzureDevOps.Alias.ToLower())_mwebsolutions" `
             -SshRootPath $sshRootPath `
             -KeyPassphrase '' `
             -ForceNewKey $false)
@@ -96,9 +68,9 @@ $SshConfig = [pscustomobject]@{
         New-SshHostConfigBlock -HostAlias $_.HostAlias -HostName $_.HostName -IdentityFileName $_.KeyFileName
     } ) -join "`n`n"
 
-    MWeb   = ( @($Ssh.MWeb.GitHub, $Ssh.MWeb.AzureDevOps) | ForEach-Object {
-        New-SshHostConfigBlock -HostAlias $_.HostAlias -HostName $_.HostName -IdentityFileName $_.KeyFileName
-    } ) -join "`n`n"
+    # MWeb   = ( @($Ssh.MWeb.GitHub, $Ssh.MWeb.AzureDevOps) | ForEach-Object {
+    #     New-SshHostConfigBlock -HostAlias $_.HostAlias -HostName $_.HostName -IdentityFileName $_.KeyFileName
+    # } ) -join "`n`n"
 
     Global = $Ssh.Global.Config
 }

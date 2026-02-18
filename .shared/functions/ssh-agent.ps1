@@ -82,7 +82,7 @@ function Test-EnsureSshAgent {
         return $false
     }
 
-    Write-StatusMessage -Title "SSH Agent" -Message "Checking [ssjh-agent] service status..."
+    Write-StatusMessage -Title "SSH Agent" -Message "Checking [ssh-agent] service status..."
     Write-Var -Name "Service" -Value $service.Name -NoNewLine -NoIcon
     Write-Var -Name "Status"  -Value $service.Status -NoNewLine -NoIcon
     Write-Var -Name "Startup" -Value $service.StartType -NoNewLine -NoIcon
@@ -111,7 +111,7 @@ function Test-EnsureSshAgent {
                 Write-OkMessage -Title "SSH Agent" -Message "Service started and running"
             }
             catch {
-                Write-FailMessage -Title "SSH Agent" -Message "Service start failed".
+                Write-FailMessage -Title "SSH Agent" -Message "Service start failed"
                 Write-Warn $_.Exception.Message -NoIcon
                 return $false
             }

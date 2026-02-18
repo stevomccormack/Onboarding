@@ -11,8 +11,6 @@ Write-MastHead "SSH Configuration"
 $sshProfiles = @(
     $Ssh.Steve.GitHub
     $Ssh.Steve.AzureDevOps
-    $Ssh.MWeb.GitHub
-    $Ssh.MWeb.AzureDevOps
 ) | Where-Object { $_ -and $_.Enabled }
 
 if (-not $sshProfiles -or @($sshProfiles).Count -eq 0) {
@@ -73,6 +71,11 @@ else {
 }
 
 # ------------------------------------------------------------------------------------------------
+# SSH Agent: start ssh-agent service + optional clear of existing keys
+# ------------------------------------------------------------------------------------------------
+Test-EnsureSshAgent -StartupType Automatic -StartService
+
+# ------------------------------------------------------------------------------------------------
 # SSH Agent: clear all existing keys if enabled
 # ------------------------------------------------------------------------------------------------
 if ($Ssh.UseSshAgent) {
@@ -121,8 +124,8 @@ foreach ($p in @($sshProfiles)) {
     }
 
     # Register SSH Key with provider
-    if ($Ssh.RegisterProviderKeys) {
-        Write-StatusMessage -Title "SSH Register" -Message "Registering provider key"
+    if ($Ssh.AutoCreateProviderKeys) {
+        Write-StatusMessage -Title "SSH Register" -Message "Registering provider key automatically...."
 
         switch ($p.Provider) {
             ([GitProvider]::GitHub) {
@@ -138,6 +141,41 @@ foreach ($p in @($sshProfiles)) {
             }
         }
     }
+    else {
+        Write-NewLine        
+        Write-Var -Name "Email" -Value $p.Email -NoNewLine -NoIcon        
+        Write-Var -Name "Org" -Value $p.Org -NoNewLine -NoIcon
+        Write-StatusMessage -Title "SSH Register" -Message "Register provider keys using browser...."
+
+        switch ($p.Provider) {
+            ([GitProvider]::GitHub) {
+                Register-GitHubSshKey -PublicKeyPath $pub -Title $p.HostAlias -UseBrowser -WaitForBrowserClose | Out-Null
+            }
+            ([GitProvider]::AzureDevOps) {
+                Register-AzureDevOpsSshKey -PublicKeyPath $pub -OrgName $p.Org -FriendlyName $p.HostAlias -WaitForBrowserClose | Out-Null
+            }
+            default {
+                Write-WarnMessage -Title "SSH Register" -Message "Unknown provider '$($p.Provider)'. Skipping registration."
+                Write-Warn "Ensure you upload the public key manually." -NoIcon
+            }
+        }
+    }
+}
+
+# ------------------------------------------------------------------------------------------------
+# Test SSH Profiles
+# ------------------------------------------------------------------------------------------------
+Write-Header "Test SSH Profiles"
+
+foreach ($p in @($sshProfiles)) {
+
+    if ($null -eq $p) { continue }
+
+    Write-StatusMessage -Title "SSH Profile" -Message "Loading profile alias: $($p.HostAlias)"
+    Write-Var -Name "Provider" -Value $p.Provider -NoNewLine -NoIcon
+    Write-Var -Name "Org" -Value $p.Org -NoNewLine -NoIcon
+    Write-Var -Name "Host" -Value $p.HostName -NoNewLine -NoIcon
+    Write-Var -Name "KeyType" -Value $p.KeyType -NoIcon
 
     # Test SSH Connection
     if ($Ssh.TestConnection) {

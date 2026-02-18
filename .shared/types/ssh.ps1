@@ -190,7 +190,8 @@ function New-SshProfile {
     }
 
     if (-not (Test-Path -LiteralPath $sshRootClean -PathType Container)) {
-        throw "SshRootPath does not exist: $sshRootClean"
+        New-Item -Path $sshRootClean -ItemType Directory -Force | Out-Null
+        Write-Ok "Created SSH root directory: $sshRootClean"
     }
 
     $keyFileName = "id_{0}_{1}" -f $keyTypeClean, $prefixClean

@@ -25,7 +25,19 @@ function Register-GitHubSshKey {
         # Optional GitHub PAT used to authenticate GitHub CLI non-interactively.
         [Parameter()]
         [AllowEmptyString()]
-        [string]$PersonalAccessToken = ''
+        [string]$PersonalAccessToken = '',
+
+        # UseBrowser:
+        # When specified, skips CLI authentication and opens the GitHub SSH settings page
+        # in the browser for manual key registration.
+        [Parameter()]
+        [switch]$UseBrowser,
+
+        # WaitForBrowserClose:
+        # When specified, attempts to wait for the launched browser process to exit.
+        # Falls back to an interactive prompt if process tracking is not reliable.
+        [Parameter()]
+        [switch]$WaitForBrowserClose
     )
 
     # Guards
@@ -44,8 +56,13 @@ function Register-GitHubSshKey {
     Write-StatusMessage -Title "GitHub SSH" -Message "Registering public key: $titleClean"
     Write-Var -Name "Title"         -Value $titleClean -NoNewLine -NoIcon
     Write-Var -Name "PublicKeyPath" -Value $PublicKeyPath -NoNewLine -NoIcon
+    Write-Var -Name "UseBrowser"    -Value $UseBrowser.IsPresent -NoNewLine -NoIcon
     Write-Var -Name "HasPAT"        -Value $hasPat -NoNewLine -NoIcon
     Write-Var -Name "HasGhCli"      -Value $hasGh -NoIcon
+
+    if ($UseBrowser.IsPresent) {
+        return Register-GitHubSshKeyViaBrowser -PublicKeyPath $PublicKeyPath -Title $titleClean -WaitForBrowserClose:$WaitForBrowserClose
+    }
 
     if ($hasPat -and $hasGh) {
         try {
@@ -87,24 +104,92 @@ function Register-GitHubSshKey {
     #--------------------------------------------------------------------------------------------
     # Fallback to manual browser flow
 
-    Write-WarnMessage -Text "GitHub SSH" -Message "Fallback to manual browser flow"
+    return Register-GitHubSshKeyViaBrowser -PublicKeyPath $PublicKeyPath -Title $titleClean -WaitForBrowserClose:$WaitForBrowserClose
+}
+
+# ------------------------------------------------------------------------------------------------
+# Register-GitHubSshKeyViaBrowser:
+# Opens the GitHub SSH settings page in the browser, copies the public key to the clipboard,
+# and prompts the user to confirm completion.
+# Returns $true on success, $false on skip/failure.
+# ------------------------------------------------------------------------------------------------
+function Register-GitHubSshKeyViaBrowser {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]$PublicKeyPath,
+
+        [Parameter(Mandatory)]
+        [string]$Title,
+
+        # WaitForBrowserClose:
+        # When specified, attempts to wait for the launched browser process to exit.
+        # Falls back to an interactive prompt if process tracking is not reliable.
+        [Parameter()]
+        [switch]$WaitForBrowserClose
+    )
+
+    Write-StatusMessage -Title "GitHub SSH" -Message "Browser flow: registering SSH key"
     Write-Host "GitHub SSH settings: https://github.com/settings/ssh/new" -ForegroundColor Cyan
 
     Copy-FileToClipboard -Path $PublicKeyPath | Out-Null
 
+    $proc = $null
     try {
-        Start-Process 'https://github.com/settings/ssh/new'
-        return $true
+        $proc = Start-Process 'https://github.com/settings/ssh/new' -PassThru -ErrorAction Stop
     }
     catch {
         Write-FailMessage -Title "GitHub SSH" -Message "Failed to open browser for SSH key registration"
         Write-Warn $_.Exception.Message -NoIcon
         Write-Warn "Open your browser and navigate to: https://github.com/settings/ssh/new" -NoIcon
-        Write-Warn "Open your browser and navigate to: https://github.com/settings/ssh/new" -NoIcon
         Write-Warn "Your SSH public key has been copied to the clipboard." -NoIcon
         Write-Warn "Simply paste it into the form and save." -NoIcon
         return $false
     }
+
+    $waited = $false
+
+    if ($WaitForBrowserClose.IsPresent -and $proc -and $proc.Id -gt 0) {
+        Write-StatusMessage -Title "GitHub SSH" -Message "Waiting for browser to close..."
+        try {
+            # Wait briefly to detect if the process is just the URL handler (exits instantly)
+            $exited = $proc.WaitForExit(2000)
+            if (-not $exited) {
+                # Process is still running — it's the real browser, wait for it
+                Wait-Process -Id $proc.Id -ErrorAction Stop
+                $waited = $true
+            }
+            # If it exited within 2s, it was just the shell handler — fall through to prompt
+        }
+        catch { <# fall through to interactive prompt #> }
+    }
+
+    if (-not $waited) {
+        while ($true) {
+            $choice = Write-Choice `
+                -Prompt "Have you finished adding the SSH key '$Title' in the browser?" `
+                -YesLabel "Continue" `
+                -NoLabel "Retry Open" `
+                -SkipLabel "Skip"
+
+            if ($choice -eq "Continue") { break }
+
+            if ($choice -eq "Retry Open") {
+                Write-StatusMessage -Title "GitHub SSH" -Message "Re-opening SSH keys page"
+                Copy-FileToClipboard -Path $PublicKeyPath | Out-Null
+                try { Start-Process 'https://github.com/settings/ssh/new' } catch { }
+                continue
+            }
+
+            if ($choice -eq "Skip") {
+                Write-WarnMessage -Title "GitHub SSH" -Message "Skipped by user"
+                return $false
+            }
+        }
+    }
+
+    Write-OkMessage -Title "GitHub SSH" -Message "SSH key registered via browser: $Title"
+    return $true
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -199,7 +284,7 @@ function Register-AzureDevOpsSshKey {
     $keysUrl = "https://dev.azure.com/$orgClean/_usersSettings/keys"
 
     Write-Header "Azure DevOps SSH Key Registration using Browser Flow"
-    Write-StatusMessage "Please follow the instructions below to add the SSH key to Azure DevOps." 
+    Write-StatusMessage -Title "Azure DevOps SSH" -Message "Please follow the instructions below to add the SSH key to Azure DevOps."
 
     Write-Host ""
     Write-Host "INSTRUCTIONS:" -ForegroundColor Cyan
@@ -228,15 +313,24 @@ function Register-AzureDevOpsSshKey {
         return $false
     }
 
-    $canWait = $WaitForBrowserClose.IsPresent -and $proc -and $proc.Id -gt 0
+    $waited = $false
 
-    if ($canWait) {
-        Write-StatusMessage -Title "Azure DevOps SSH" -Message "Closing browser to continue..."
-        try { Wait-Process -Id $proc.Id -ErrorAction Stop }
-        catch { $canWait = $false }
+    if ($WaitForBrowserClose.IsPresent -and $proc -and $proc.Id -gt 0) {
+        Write-StatusMessage -Title "Azure DevOps SSH" -Message "Waiting for browser to close..."
+        try {
+            # Wait briefly to detect if the process is just the URL handler (exits instantly)
+            $exited = $proc.WaitForExit(2000)
+            if (-not $exited) {
+                # Process is still running — it's the real browser, wait for it
+                Wait-Process -Id $proc.Id -ErrorAction Stop
+                $waited = $true
+            }
+            # If it exited within 2s, it was just the shell handler — fall through to prompt
+        }
+        catch { <# fall through to interactive prompt #> }
     }
 
-    if (-not $canWait) {
+    if (-not $waited) {
         while ($true) {
             $choice = Write-Choice `
                 -Prompt "Have you finished adding the SSH key in the browser?" `
