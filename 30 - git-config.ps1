@@ -10,26 +10,27 @@ Write-Status "Configuring projects..."
 # ------------------------------------------------------------------------------------------------
 
 # Configure global Git settings
-git config --global core.editor $Git.Editor
-git config --global core.autocrlf $Git.AutoCrlf
-git config --global core.longpaths $Git.LongPaths
-git config --global credential.helper $Git.CredentialHelper
-git config --global fetch.prune $Git.FetchPrune
-git config --global color.ui $Git.ColorUi
-git config --global push.default $Git.PushDefault
-git config --global push.autoSetupRemote $Git.PushAutoSetupRemote
-git config --global rebase.autoStash $Git.RebaseAutoStash
-git config --global rerere.enabled $Git.RerereEnabled
+git config --global core.editor $GitConfig.Editor
+git config --global core.autocrlf $GitConfig.AutoCrlf
+git config --global core.longpaths $GitConfig.LongPaths
+git config --global credential.helper $GitConfig.CredentialHelper
+git config --global fetch.prune $GitConfig.FetchPrune
+git config --global color.ui $GitConfig.ColorUi
+git config --global push.default $GitConfig.PushDefault
+git config --global push.autoSetupRemote $GitConfig.PushAutoSetupRemote
+git config --global rebase.autoStash $GitConfig.RebaseAutoStash
+git config --global rerere.enabled $GitConfig.RerereEnabled
 
 # ------------------------------------------------------------------------------------------------
 
-$Projects.GetAll() | ForEach-Object {
+$Projects.PSObject.Properties.Value | ForEach-Object {
     $project = $_
 
     # Safe directories
     $existingSafeDirs = git config --global --get-all safe.directory 2>$null
     if ($existingSafeDirs -notcontains $project.LocalPath) {
         git config --global --add safe.directory $project.LocalPath
+        Write-OkMessage -Title "Git Config" -Message "Added safe.directory: $($project.LocalPath)"
     }
 }
 
