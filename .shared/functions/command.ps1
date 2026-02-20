@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-Command {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # Name:
         # The name of the command to test for availability.

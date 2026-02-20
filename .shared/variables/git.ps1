@@ -4,6 +4,22 @@
 # Git Variables
 # -------------------------------------------------------------------------------------------------
 
+$gitInstallUrl = 'https://git-scm.com/downloads'
+$gitDocsUrl = 'https://git-scm.com/docs'
+
+$Git = [pscustomobject]@{
+    Id          = 'git'
+    Enabled     = $true                         # Enable Git installation
+    Name        = 'Git'
+    CommandName = 'git'
+    TestCommand = 'git --version'
+    Description = 'Distributed version control system'
+    WingetId    = 'Git.Git'                     # winget install --exact --id Git.Git --source winget
+    ChocoId     = 'git'                         # choco install git
+    InstallUrl  = $gitInstallUrl                # Installation page
+    DocsUrl     = $gitDocsUrl                   # Documentation
+}
+
 $GitConfig = [pscustomobject]@{
     Editor              = 'code --wait'     # Default editor for commit messages, etc.
     AutoCrlf            = 'true'            # Automatic line-ending conversion
@@ -20,6 +36,9 @@ $GitConfig = [pscustomobject]@{
 # -------------------------------------------------------------------------------------------------
 
 if ($Global.Log.Enabled) {
+    Write-Header "`$Git` Variables:"
+    $Git | Format-List
+
     Write-Header "`$GitConfig` Variables:"
     $GitConfig | Format-List
 }

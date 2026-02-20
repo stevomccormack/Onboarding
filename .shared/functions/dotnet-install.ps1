@@ -9,6 +9,7 @@
 # ------------------------------------------------------------------------------------------------
 function New-DownloadDotNetInstallScript {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # DownloadUrl:
         # URL to download the .NET install script from.

@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function Set-EnvironmentVariable {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Name:
         # Environment variable name. Must be non-empty (whitespace/BOM is trimmed).
@@ -24,7 +25,7 @@ function Set-EnvironmentVariable {
         # Scope:
         # Target scope to persist the variable to: Process, User, or Machine.
         [Parameter()]
-        [ValidateSet('Process','User','Machine')]
+        [ValidateSet('Process', 'User', 'Machine')]
         [string]$Scope = 'User',
 
         # Force:
@@ -41,11 +42,11 @@ function Set-EnvironmentVariable {
     if (-not $Force -and $null -ne $existing) {
         if ($existing -ceq $Value) {
             Write-Var -Name "[$Scope] $nameClean" -Value $Value -NoIcon -NoNewLine
-            Write-Host " (unchanged)" -ForegroundColor DarkYellow
+            Write-Host " (unchanged)" -ForegroundColor DarkGray
         }
         else {
             Write-Var -Name "[$Scope] $nameClean" -Value $existing -NoIcon -NoNewLine
-            Write-Host " (exists)" -ForegroundColor DarkYellow
+            Write-Host " (exists)" -ForegroundColor Green
         }
 
         return ($existing -ceq $Value)
@@ -56,7 +57,7 @@ function Set-EnvironmentVariable {
     }
 
     try {
-        Write-StatusMessage -Title "Setting" -Message "[$Scope] $nameClean" -NoIcon
+        # Write-StatusMessage -Title "Setting" -Message "[$Scope] $nameClean" -NoIcon
 
         # Persist to requested scope
         [Environment]::SetEnvironmentVariable($nameClean, $Value, $Scope)
@@ -84,6 +85,7 @@ function Set-EnvironmentVariable {
 # ------------------------------------------------------------------------------------------------
 function Remove-EnvironmentVariable {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Name:
         # Environment variable name. Must be non-empty (whitespace/BOM is trimmed).
@@ -94,7 +96,7 @@ function Remove-EnvironmentVariable {
         # Scope:
         # Target scope to remove the variable from: Process, User, or Machine.
         [Parameter()]
-        [ValidateSet('Process','User','Machine')]
+        [ValidateSet('Process', 'User', 'Machine')]
         [string]$Scope = 'User'
     )
 

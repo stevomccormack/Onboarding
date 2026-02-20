@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-EnsureDirectory {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # Path:
         # Directory path to test or create.
@@ -40,6 +41,7 @@ function Test-EnsureDirectory {
 # ------------------------------------------------------------------------------------------------
 function Test-EnsureFile {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # Path:
         # File path to test or create.
@@ -80,6 +82,7 @@ function Test-EnsureFile {
 # ------------------------------------------------------------------------------------------------
 function New-DirectoryPath {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         # Path:
         # Directory path to create.
@@ -119,6 +122,7 @@ function New-DirectoryPath {
 # ------------------------------------------------------------------------------------------------
 function New-FilePath {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         # Path:
         # File path to create.
@@ -163,6 +167,7 @@ function New-FilePath {
 # ------------------------------------------------------------------------------------------------
 function Clear-Directory {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Path:
         # Directory whose contents will be removed.
@@ -183,7 +188,7 @@ function Clear-Directory {
 
     try {
         Get-ChildItem -LiteralPath $Path -Force -ErrorAction Stop |
-            Remove-Item -Recurse -Force -ErrorAction Stop
+        Remove-Item -Recurse -Force -ErrorAction Stop
 
         Write-OkMessage -Title "Clear Directory" -Message "Removed all files from directory: $Path"
         return $true
@@ -202,6 +207,7 @@ function Clear-Directory {
 # ------------------------------------------------------------------------------------------------
 function Clear-File {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Path:
         # File path to delete.
@@ -241,6 +247,7 @@ function Clear-File {
 # ------------------------------------------------------------------------------------------------
 function New-BackupFile {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         # Path:
         # File path to back up.
@@ -273,7 +280,7 @@ function New-BackupFile {
     }
 
     try {
-        $timestamp  = Get-Date -Format $BackupDateTimeFormat -ErrorAction Stop
+        $timestamp = Get-Date -Format $BackupDateTimeFormat -ErrorAction Stop
         $backupPath = "$Path$BackupFileSuffix.$timestamp"
 
         Copy-Item -LiteralPath $Path -Destination $backupPath -Force -ErrorAction Stop
@@ -301,6 +308,7 @@ function New-BackupFile {
 # ------------------------------------------------------------------------------------------------
 function New-BackupDirectory {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         # SourcePath:
         # Directory path to back up.
@@ -338,7 +346,7 @@ function New-BackupDirectory {
 
         if ($ClearAfterBackup.IsPresent) {
             Get-ChildItem -LiteralPath $SourcePath -Force -ErrorAction Stop |
-                Remove-Item -Recurse -Force -ErrorAction Stop
+            Remove-Item -Recurse -Force -ErrorAction Stop
 
             Write-OkMessage -Title "Backup Directory" -Message "Original directory cleared: $SourcePath"
         }

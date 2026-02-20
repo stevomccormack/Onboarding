@@ -27,10 +27,7 @@ memory=16GB
 processors=10
 
 # Swap file size (should be 25-50% of memory allocation)
-swap=4GB
-
-# Disable page reporting (improves performance, slightly more memory usage)
-pageReporting=false
+swap=8GB
 
 # Nested virtualization support (for Docker, K8s, etc.)
 nestedVirtualization=true

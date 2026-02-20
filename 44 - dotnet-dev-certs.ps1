@@ -13,8 +13,13 @@ Write-MastHead ".NET Development Certificates"
 Write-Header "Create and Trust Dev Certificate"
 Write-Status "Cleaning and creating new trusted certificate..."
 
+Write-Command "dotnet dev-certs https --clean"
 dotnet dev-certs https --clean
+
+Write-Command "dotnet dev-certs https --trust"
 dotnet dev-certs https --trust
+
+Write-Command "dotnet dev-certs https --check --trust"
 dotnet dev-certs https --check --trust
 
 

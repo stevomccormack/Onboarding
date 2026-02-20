@@ -4,47 +4,74 @@
 
 # ------------------------------------------------------------------------------------------------
 
-Write-MastHead ".NET Build Repositories"
+Write-MastHead ".NET Projects: Restore & Build"
 
 # ------------------------------------------------------------------------------------------------
-# Build All Repositories
-# Finds and builds all .NET solutions in the repositories directory.
+# Find all projects tagged 'dotnet'
 # ------------------------------------------------------------------------------------------------
+Write-Header "Resolving .NET Projects"
 
-$reposDir = ""
+$dotnetProjects = $Projects.PSObject.Properties.Value | Where-Object { $_.Tags -contains 'dotnet' }
 
-if ([string]::IsNullOrWhiteSpace($reposDir)) {
-    Write-FailMessage -Title "" -Message "Environment variable not set"
-    exit 1
-}
-
-if (-not (Test-Path $reposDir)) {
-    Write-FailMessage -Title "Directory" -Message "Not found: $reposDir"
-    exit 1
-}
-
-Write-Status "Repository directory: $reposDir"
-
-$solutions = Get-ChildItem -Path $reposDir -Filter "*.sln" -Recurse
-
-if ($solutions.Count -eq 0) {
-    Write-InfoMessage -Title "Solutions" -Message "No .sln files found"
+if (-not $dotnetProjects) {
+    Write-InfoMessage -Title "Projects" -Message "No projects tagged 'dotnet' found in `$Projects"
     exit 0
 }
 
-Write-Status "Found $($solutions.Count) solution(s)"
+Write-Status "Found $(@($dotnetProjects).Count) project(s) tagged 'dotnet':"
+foreach ($project in $dotnetProjects) {
+    Write-Info "  - $($project.Name): $($project.LocalPath)" -NoIcon
+}
 
-foreach ($sln in $solutions) {
-    Write-Header "Building: $($sln.Name)"
-    
-    dotnet clean $sln.FullName
-    dotnet restore $sln.FullName
-    dotnet build $sln.FullName --configuration Release --no-restore --verbosity minimal
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-OkMessage -Title $sln.Name -Message "Build succeeded"
+# ------------------------------------------------------------------------------------------------
+# Build All .NET Solutions
+# Finds and builds all .sln files within each tagged project's LocalPath.
+# ------------------------------------------------------------------------------------------------
+Write-Header "Building Solutions"
+
+$builtCount = 0
+$failedCount = 0
+
+foreach ($project in $dotnetProjects) {
+
+    if ([string]::IsNullOrWhiteSpace($project.LocalPath)) {
+        Write-FailMessage -Title $project.Name -Message "LocalPath is not set"
+        $failedCount++
+        continue
     }
-    else {
-        Write-FailMessage -Title $sln.Name -Message "Build failed"
+
+    if (-not (Test-Path $project.LocalPath)) {
+        Write-FailMessage -Title $project.Name -Message "LocalPath not found: $($project.LocalPath)"
+        $failedCount++
+        continue
+    }
+
+    $solutions = Get-ChildItem -Path $project.LocalPath -Include "*.sln", "*.slnx" -Recurse
+
+    if ($solutions.Count -eq 0) {
+        Write-InfoMessage -Title $project.Name -Message "No .sln or .slnx files found in $($project.LocalPath)"
+        continue
+    }
+
+    foreach ($sln in $solutions) {
+        Write-StatusHeader "Building: $($sln.Name)..."
+
+        Write-Command "dotnet clean $($sln.FullName)"
+        dotnet clean $sln.FullName
+
+        Write-Command "dotnet restore $($sln.FullName)"
+        dotnet restore $sln.FullName
+
+        Write-Command "dotnet build $($sln.FullName) --configuration Release --no-restore --verbosity minimal"
+        dotnet build $sln.FullName --configuration Release --no-restore --verbosity minimal
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-OkMessage -Title $sln.Name -Message "Build succeeded"
+            $builtCount++
+        }
+        else {
+            Write-FailMessage -Title $sln.Name -Message "Build failed"
+            $failedCount++
+        }
     }
 }

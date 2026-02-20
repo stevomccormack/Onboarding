@@ -12,6 +12,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-SshConnection {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # UserName:
         # SSH username (e.g. 'git').
@@ -101,7 +102,7 @@ function Test-SshConnection {
         Write-Host ($echoArgs -join ' ') -ForegroundColor Cyan
 
         $output = & ssh @ArgsList 2>&1
-        $exit   = $LASTEXITCODE
+        $exit = $LASTEXITCODE
 
         return [pscustomobject]@{
             Output = ($output | Out-String).Trim()
@@ -113,13 +114,13 @@ function Test-SshConnection {
         $result = Invoke-SshTest -ArgsList $baseArgs
 
         $output = $result.Output
-        $exit   = $result.Exit
+        $exit = $result.Exit
 
         $isKexMismatch =
-            ($output -match 'unsupported KEX method') -or
-            ($output -match 'no matching key exchange method found') -or
-            ($output -match 'kex_exchange_identification') -or
-            ($output -match 'Unable to negotiate')
+        ($output -match 'unsupported KEX method') -or
+        ($output -match 'no matching key exchange method found') -or
+        ($output -match 'kex_exchange_identification') -or
+        ($output -match 'Unable to negotiate')
 
         if ($EnableKexFallback.IsPresent -and $isKexMismatch) {
             Write-WarnMessage -Title "SSH Test" -Message "KEX mismatch detected. Retrying with conservative KexAlgorithms..."
@@ -129,22 +130,22 @@ function Test-SshConnection {
 
             $result = Invoke-SshTest -ArgsList $fallbackArgs
             $output = $result.Output
-            $exit   = $result.Exit
+            $exit = $result.Exit
         }
 
         $isGitHubSuccess =
-            ($output -match 'successfully authenticated') -or
-            ($output -match 'Hi\s+.+!\s+You''ve successfully authenticated')
+        ($output -match 'successfully authenticated') -or
+        ($output -match 'Hi\s+.+!\s+You''ve successfully authenticated')
 
         # Azure DevOps "success" signals:
         # - "Welcome to Azure DevOps" (sometimes)
         # - "remote: Shell access is not supported." (common; key accepted, but no interactive shell)
         $isAzureSuccess =
-            ($output -match 'Welcome to Azure DevOps') -or
-            ($output -match 'remote:\s*Shell access is not supported\.') -or
-            ($output -match 'shell request failed on channel 0') -or
-            ($output -match 'Authentication succeeded') -or
-            ($output -match 'Signed in')
+        ($output -match 'Welcome to Azure DevOps') -or
+        ($output -match 'remote:\s*Shell access is not supported\.') -or
+        ($output -match 'shell request failed on channel 0') -or
+        ($output -match 'Authentication succeeded') -or
+        ($output -match 'Signed in')
 
         $isSuccess = $isGitHubSuccess -or $isAzureSuccess
 
@@ -174,6 +175,7 @@ function Test-SshConnection {
 # ------------------------------------------------------------------------------------------------
 function Test-SshDebug {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # HostName:
         # SSH host domain (e.g. 'ssh.dev.azure.com', 'github.com').
@@ -184,7 +186,7 @@ function Test-SshDebug {
         # Port:
         # SSH port (default 22).
         [Parameter()]
-        [ValidateRange(1,65535)]
+        [ValidateRange(1, 65535)]
         [int]$Port = 22,
 
         # UserName:
@@ -202,7 +204,7 @@ function Test-SshDebug {
         # Verbosity:
         # Verbosity level. Use 1 for -v, 3 for -vvv.
         [Parameter()]
-        [ValidateSet(1,3)]
+        [ValidateSet(1, 3)]
         [int]$Verbosity = 1,
 
         # AllocateTty:

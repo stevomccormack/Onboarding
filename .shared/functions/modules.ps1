@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-Module {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # ModuleName:
         # Name of the PowerShell module to test (e.g. 'ExchangeOnlineManagement').
@@ -38,6 +39,7 @@ function Test-Module {
 # ------------------------------------------------------------------------------------------------
 function Install-Module {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # ModuleName:
         # Name of the PowerShell module to install.
@@ -48,7 +50,7 @@ function Install-Module {
         # Scope:
         # Installation scope (CurrentUser or AllUsers).
         [Parameter()]
-        [ValidateSet('CurrentUser','AllUsers')]
+        [ValidateSet('CurrentUser', 'AllUsers')]
         [string]$Scope = 'CurrentUser',
 
         # Repository:
@@ -88,7 +90,7 @@ function Install-Module {
     }
     else {
         $commandText = "PowerShellGet\Install-Module -Name $moduleNameClean -Scope $Scope -Repository $Repository"
-        if ($Force)        { $commandText += " -Force" }
+        if ($Force) { $commandText += " -Force" }
         if ($AllowClobber) { $commandText += " -AllowClobber" }
 
         Write-Status -Title "Install Module" -Message "Installing module: $commandText..."
@@ -101,7 +103,7 @@ function Install-Module {
                 ErrorAction = 'Stop'
             }
 
-            if ($Force)        { $installParams['Force']        = $true }
+            if ($Force) { $installParams['Force'] = $true }
             if ($AllowClobber) { $installParams['AllowClobber'] = $true }
 
             PowerShellGet\Install-Module @installParams
@@ -129,6 +131,7 @@ function Install-Module {
 # ------------------------------------------------------------------------------------------------
 function Import-ModuleSafe {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # ModuleName:
         # Name of the PowerShell module to import.
@@ -162,6 +165,7 @@ function Import-ModuleSafe {
 # ------------------------------------------------------------------------------------------------
 function Install-ModuleAndImport {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # ModuleName:
         # Name of the PowerShell module to install and import.

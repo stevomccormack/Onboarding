@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function New-SshAgentKey {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # KeyFilePath:
         # Full path to the SSH private key file to add (e.g. C:\Users\me\.ssh\id_ed25519).
@@ -32,7 +33,7 @@ function New-SshAgentKey {
 
     try {
         $output = & ssh-add $KeyFilePath 2>&1
-        $exit   = $LASTEXITCODE
+        $exit = $LASTEXITCODE
 
         if ($exit -eq 0) {
             Write-OkMessage -Title "SSH key added" -Message $KeyFilePath
@@ -57,11 +58,12 @@ function New-SshAgentKey {
 # ------------------------------------------------------------------------------------------------
 function Test-EnsureSshAgent {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # StartupType:
         # Optional startup type to apply to the ssh-agent service: Automatic, Manual, or Disabled.
         [Parameter()]
-        [ValidateSet('Automatic','Manual','Disabled')]
+        [ValidateSet('Automatic', 'Manual', 'Disabled')]
         [string]$StartupType,
 
         # StartService:
@@ -137,6 +139,7 @@ function Test-EnsureSshAgent {
 # ------------------------------------------------------------------------------------------------
 function Clear-SshAgentKeys {
     [CmdletBinding()]
+    [OutputType([bool])]
     param ()
 
     # Guards
@@ -150,7 +153,7 @@ function Clear-SshAgentKeys {
 
     try {
         $output = & ssh-add -D 2>&1
-        $exit   = $LASTEXITCODE
+        $exit = $LASTEXITCODE
 
         if ($exit -eq 0) {
             Write-OkMessage -Title "SSH Agent" -Message "All keys removed from agent"

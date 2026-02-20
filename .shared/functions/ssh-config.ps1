@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function New-SshHostConfigBlock {
     [CmdletBinding()]
+    [OutputType([string])]
     param (
         # HostAlias:
         # SSH host alias used in config (e.g. 'github.com-myorg').
@@ -35,9 +36,9 @@ function New-SshHostConfigBlock {
 
     # Guards
     $hostAliasClean = $HostAlias.Trim()
-    $hostNameClean  = $HostName.Trim()
-    $keyNameClean   = $IdentityFileName.Trim()
-    $userClean      = $User.Trim()
+    $hostNameClean = $HostName.Trim()
+    $keyNameClean = $IdentityFileName.Trim()
+    $userClean = $User.Trim()
 
     # Write-StatusMessage -Title "SSH Config" -Message "Building host block"
     # Write-Var -Name "HostAlias"     -Value $hostAliasClean
@@ -45,7 +46,7 @@ function New-SshHostConfigBlock {
     # Write-Var -Name "User"          -Value $userClean
     # Write-Var -Name "IdentityFile"  -Value "~/.ssh/$keyNameClean"
 
-@"
+    @"
 Host $hostAliasClean
     HostName $hostNameClean
     User $userClean
@@ -61,11 +62,12 @@ Host $hostAliasClean
 # ------------------------------------------------------------------------------------------------
 function New-SshFallbackConfigBlock {
     [CmdletBinding()]
+    [OutputType([string])]
     param()
 
     # Write-StatusMessage -Title "SSH Config" -Message "Building fallback block"
 
-@"
+    @"
 Host *
     IdentitiesOnly yes
 "@
@@ -79,6 +81,7 @@ Host *
 # ------------------------------------------------------------------------------------------------
 function New-SshConfigBlocks {
     [CmdletBinding()]
+    [OutputType([string[]])]
     param (
         # SshProfiles:
         # Collection of SSH profile objects (each must include HostAlias, HostName, KeyFileName).
@@ -98,13 +101,13 @@ function New-SshConfigBlocks {
         $blocks = New-Object System.Collections.Generic.List[string]
 
         foreach ($p in $profiles) {
-            if (-not ($p.PSObject.Properties.Name -contains 'HostAlias'))   { Write-WarnMessage -Title "Profile missing" -Message "HostAlias";   continue }
-            if (-not ($p.PSObject.Properties.Name -contains 'HostName'))    { Write-WarnMessage -Title "Profile missing" -Message "HostName";    continue }
+            if (-not ($p.PSObject.Properties.Name -contains 'HostAlias')) { Write-WarnMessage -Title "Profile missing" -Message "HostAlias"; continue }
+            if (-not ($p.PSObject.Properties.Name -contains 'HostName')) { Write-WarnMessage -Title "Profile missing" -Message "HostName"; continue }
             if (-not ($p.PSObject.Properties.Name -contains 'KeyFileName')) { Write-WarnMessage -Title "Profile missing" -Message "KeyFileName"; continue }
 
             $hostAlias = [string]$p.HostAlias
-            $hostName  = [string]$p.HostName
-            $keyName   = [string]$p.KeyFileName
+            $hostName = [string]$p.HostName
+            $keyName = [string]$p.KeyFileName
 
             if ([string]::IsNullOrWhiteSpace($hostAlias) -or [string]::IsNullOrWhiteSpace($hostName) -or [string]::IsNullOrWhiteSpace($keyName)) {
                 Write-WarnMessage -Title "SSH Config" -Message "Profile invalid: missing required field(s)"
@@ -139,6 +142,7 @@ function New-SshConfigBlocks {
 # ------------------------------------------------------------------------------------------------
 function Set-SshConfigFile {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # ConfigPath:
         # Full path to the SSH config file to write.

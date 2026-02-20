@@ -24,20 +24,28 @@ $wingetDocsUrl = 'https://learn.microsoft.com/en-us/windows/package-manager/wing
 $wingetPackagesUrl = 'https://winget.run/'
 
 $Winget = [pscustomobject]@{
-    InstallUrl          = $wingetInstallUrl            # Installation instructions (included in Windows 11+)
-    DocsUrl             = $wingetDocsUrl               # Documentation
-    PackagesUrl         = $wingetPackagesUrl           # Package search
+    Id                      = 'winget'
+    Enabled                 = $true                         # Enable winget (pre-installed on Win11)
+    Name                    = 'Windows Package Manager'
+    CommandName             = 'winget'
+    TestCommand             = 'winget --version'
+    Description             = 'Native Windows package manager (included in Windows 11+)'
+    WingetId                = $null                         # Pre-installed; no winget install needed
+    ChocoId                 = $null                         # Not available via Chocolatey
+    InstallUrl              = $wingetInstallUrl             # Installation instructions (included in Windows 11+)
+    DocsUrl                 = $wingetDocsUrl                # Documentation
+    PackagesUrl             = $wingetPackagesUrl            # Package search
     
     # WinGet Configuration Settings
-    Silent              = $true                        # Silent installation
-    AcceptPackageAgreements = $true                    # Accept package agreements
-    AcceptSourceAgreements  = $true                    # Accept source agreements
-    DisableInteractivity    = $true                    # Disable interactive prompts
-    Verbose             = $false                       # Verbose output
+    Silent                  = $true                         # Silent installation
+    AcceptPackageAgreements = $true                         # Accept package agreements
+    AcceptSourceAgreements  = $true                         # Accept source agreements
+    DisableInteractivity    = $true                         # Disable interactive prompts
+    Verbose                 = $false                        # Verbose output
     
-    Packages = @(
+    Packages                = @(
         # Only include packages not available in Chocolatey or where WinGet is preferred
-        @{ Id = 'Docker.DockerDesktop';   Enabled = $true;  Name = 'Docker Desktop';               CommandName = 'docker';        TestCommand = 'docker --version';                   Url = 'https://docker.com/products/docker-desktop/' }
+        @{ Id = 'Docker.DockerDesktop'; Enabled = $true; Name = 'Docker Desktop'; CommandName = 'docker'; TestCommand = 'docker --version'; Url = 'https://docker.com/products/docker-desktop/' }
     )
 }
 

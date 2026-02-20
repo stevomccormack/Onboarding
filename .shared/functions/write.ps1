@@ -799,7 +799,7 @@ function Write-Choice {
         # PromptForegroundColor:
         # Color for prompt text.
         [Parameter()]
-        [ConsoleColor]$PromptForegroundColor = 'Green',
+        [ConsoleColor]$PromptForegroundColor = 'Cyan',
 
         # LabelForegroundColor:
         # Color for options legend.
@@ -818,14 +818,8 @@ function Write-Choice {
         throw "YesKey, NoKey, and SkipKey must each be a single character."
     }
 
-    Write-Host ""
-    Write-Host "$yesKey = $YesLabel"   -ForegroundColor $LabelForegroundColor
-    Write-Host "$noKey  = $NoLabel"    -ForegroundColor $LabelForegroundColor
-    Write-Host "$skipKey = $SkipLabel" -ForegroundColor $LabelForegroundColor
-    Write-Host ""
-
     while ($true) {
-        Write-Host -NoNewline "$promptClean ($yesKey/$noKey/$skipKey): " -ForegroundColor $PromptForegroundColor
+        Write-Host -NoNewline "$($Ansi.Bold)$promptClean $YesLabel[$yesKey], $NoLabel[$noKey], $SkipLabel[$skipKey]:$($Ansi.Reset) " -ForegroundColor $PromptForegroundColor
         $choice = (Read-Host).Trim().ToUpperInvariant()
 
         switch ($choice) {

@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function Get-DotNetProjectCsprojAsXml {
     [CmdletBinding()]
+    [OutputType([xml])]
     param(
 
         # CsprojPath:
@@ -40,6 +41,7 @@ function Get-DotNetProjectCsprojAsXml {
 # ------------------------------------------------------------------------------------------------
 function Test-DotNetProjectHasPackageReference {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
 
         # CsprojPath:
@@ -86,6 +88,7 @@ function Test-DotNetProjectHasPackageReference {
 # ------------------------------------------------------------------------------------------------
 function Test-DotNetProjectHasProjectReference {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
 
         # CsprojPath:

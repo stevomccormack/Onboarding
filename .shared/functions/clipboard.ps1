@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function Copy-FileToClipboard {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # Path:
         # Full or relative path to an existing *file* (leaf). Must not be null or empty.

@@ -11,9 +11,26 @@ Write-MastHead "Environment Variables"
 $dotEnvResult = Import-DotEnv -Path $Global.DotEnvPath -Scope $Global.DotEnvScope -Force:$Global.DotEnvForce
 
 if (-not $dotEnvResult) {
-    Write-FatalMessage -Title "Failed to load environment variables: " -Message $Global.DotEnvPath
-    Write-Warn "Aborting further execution." -NoIcon
-    exit 1
+    Write-WarnMessage -Title "Environment variables" -Message "One or more variables already exist with different values and -Force is not set."
+    $choice = Write-Choice -Prompt "Force overwrite existing environment variables?"
+    switch ($choice) {
+        'Yes' {
+            $dotEnvResult = Import-DotEnv -Path $Global.DotEnvPath -Scope $Global.DotEnvScope -Force
+            if (-not $dotEnvResult) {
+                Write-FatalMessage -Title "Failed to load environment variables" -Message $Global.DotEnvPath
+                Write-Fatal "Aborting further execution." -NoIcon
+                exit 1
+            }
+        }
+        'Skip' {
+            Write-Warn "Skipping environment variable failure. Some variables may be outdated." -NoIcon
+        }
+        default {
+            Write-FatalMessage -Title "Failed to load environment variables" -Message $Global.DotEnvPath
+            Write-Fatal "Aborting further execution." -NoIcon
+            exit 1
+        }
+    }
 }
 
 # ----------------------------------------------------------------------------------------------------------------------

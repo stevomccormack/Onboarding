@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function Register-GitHubSshKey {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # PublicKeyPath:
         # Path to the SSH public key file (*.pub).
@@ -51,7 +52,7 @@ function Register-GitHubSshKey {
     # --------------------------------------------------------------------------------------------
 
     $hasPat = -not [string]::IsNullOrWhiteSpace($PersonalAccessToken)
-    $hasGh  = Test-Command -Name 'gh'
+    $hasGh = Test-Command -Name 'gh'
 
     Write-StatusMessage -Title "GitHub SSH" -Message "Registering public key: $titleClean"
     Write-Var -Name "Title"         -Value $titleClean -NoNewLine -NoIcon
@@ -70,7 +71,7 @@ function Register-GitHubSshKey {
             Write-Host "gh auth login --hostname github.com --with-token" -ForegroundColor Cyan
 
             $authOutput = $PersonalAccessToken | & gh auth login --hostname github.com --with-token 2>&1
-            $authExit   = $LASTEXITCODE
+            $authExit = $LASTEXITCODE
 
             if ($authExit -ne 0) {
                 Write-FailMessage -Title "GitHub SSH" -Message "Authentication Failed. Exit: $authExit"
@@ -83,7 +84,7 @@ function Register-GitHubSshKey {
             Write-Host "gh ssh-key add `"$PublicKeyPath`" --title `"$titleClean`" --type authentication" -ForegroundColor Cyan
 
             $addOutput = & gh ssh-key add $PublicKeyPath --title $titleClean --type authentication 2>&1
-            $addExit   = $LASTEXITCODE
+            $addExit = $LASTEXITCODE
 
             if ($addExit -eq 0) {
                 Write-OkMessage -Title "GitHub SSH" -Message "SSH key registered: $titleClean"
@@ -115,6 +116,7 @@ function Register-GitHubSshKey {
 # ------------------------------------------------------------------------------------------------
 function Register-GitHubSshKeyViaBrowser {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         [Parameter(Mandatory)]
         [string]$PublicKeyPath,
@@ -201,6 +203,7 @@ function Register-GitHubSshKeyViaBrowser {
 # ------------------------------------------------------------------------------------------------
 function Register-AzureDevOpsSshKey {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # PublicKeyPath:
         # Path to the SSH public key file (*.pub) that will be uploaded to Azure DevOps.
@@ -224,7 +227,7 @@ function Register-AzureDevOpsSshKey {
         # Number of seconds to pause after printing instructions and before opening the browser.
         # Allows the user time to read the steps (similar to a git rebase pause).
         [Parameter()]
-        [ValidateRange(0,60)]
+        [ValidateRange(0, 60)]
         [int]$PauseInSeconds = 3,
 
         # WaitForBrowserClose:
@@ -247,7 +250,7 @@ function Register-AzureDevOpsSshKey {
         Write-WarnMessage -Title "Azure DevOps SSH" -Message "Public key not found. Expected a .pub file: $publicKeyPathClean"
     }
 
-    $orgClean  = $OrgName.Trim()
+    $orgClean = $OrgName.Trim()
     $nameClean = $FriendlyName.Trim()
 
     if (-not (Get-Command -Name 'Start-Process' -ErrorAction SilentlyContinue)) {

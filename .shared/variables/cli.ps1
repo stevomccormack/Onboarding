@@ -3,204 +3,225 @@
 # -------------------------------------------------------------------------------------------------
 # CLI Tools Configuration
 # -------------------------------------------------------------------------------------------------
-# This file defines the primary CLI tools to be installed during onboarding.
-# Each CLI tool references configuration from its respective variable file.
+# Defines CLI tools installed during onboarding.
+# Each entry references its respective variable file for all properties.
+# Ordering reflects install dependency: runtimes before their package managers,
+# foundational tools (Git) before tools that depend on them.
+#
+# Winget is preferred for installation; Chocolatey is the fallback.
+# Chocolatey and Winget themselves are handled by cli-install.ps1, not this list.
 # -------------------------------------------------------------------------------------------------
 
 $Cli = [pscustomobject]@{
     Tools = @(
-        # Package Managers
-        @{ 
-            Id              = 'chocolatey'
-            Enabled         = $true
-            Name            = 'Chocolatey Package Manager'
-            CommandName     = 'choco'
-            TestCommand     = 'choco --version'
-            InstallUrl      = $Choco.InstallScriptUrl
-            Variable        = '$Choco'
-            Description     = 'Windows package manager for automated software installation'
+
+        # ------------------------------------------------------------------------------------------
+        # Shell
+        # PowerShell Core first — improves subsequent installs by using pwsh features.
+        # ------------------------------------------------------------------------------------------
+        @{
+            Id          = $Powershell.Id
+            Enabled     = $Powershell.Enabled
+            Name        = $Powershell.Name
+            CommandName = $Powershell.CommandName
+            TestCommand = $Powershell.TestCommand
+            WingetId    = $Powershell.WingetId
+            ChocoId     = $Powershell.ChocoId
+            InstallUrl  = $Powershell.InstallUrl
+            Variable    = '$Powershell'
+            Description = $Powershell.Description
         }
-        @{ 
-            Id              = 'winget'
-            Enabled         = $false
-            Name            = 'Windows Package Manager'
-            CommandName     = 'winget'
-            TestCommand     = 'winget --version'
-            InstallUrl      = $Winget.InstallUrl
-            Variable        = '$Winget'
-            Description     = 'Native Windows package manager (included in Windows 11+)'
-        }
-        
+
+        # ------------------------------------------------------------------------------------------
         # Version Control
-        @{ 
-            Id              = 'git'
-            Enabled         = $true
-            Name            = 'Git'
-            CommandName     = 'git'
-            TestCommand     = 'git --version'
-            InstallUrl      = 'https://git-scm.com/downloads'
-            Variable        = 'N/A'
-            Description     = 'Distributed version control system'
+        # Git must come before GitHub CLI (gh auth depends on git).
+        # ------------------------------------------------------------------------------------------
+        @{
+            Id          = $Git.Id
+            Enabled     = $Git.Enabled
+            Name        = $Git.Name
+            CommandName = $Git.CommandName
+            TestCommand = $Git.TestCommand
+            WingetId    = $Git.WingetId
+            ChocoId     = $Git.ChocoId
+            InstallUrl  = $Git.InstallUrl
+            Variable    = '$Git'
+            Description = $Git.Description
         }
-        @{ 
-            Id              = 'github-cli'
-            Enabled         = $true
-            Name            = 'GitHub CLI'
-            CommandName     = 'gh'
-            TestCommand     = 'gh --version'
-            InstallUrl      = $Gh.InstallUrl
-            Variable        = '$Gh'
-            Description     = 'GitHub command line tool'
+        @{
+            Id          = $Gh.Id
+            Enabled     = $Gh.Enabled
+            Name        = $Gh.Name
+            CommandName = $Gh.CommandName
+            TestCommand = $Gh.TestCommand
+            WingetId    = $Gh.WingetId
+            ChocoId     = $Gh.ChocoId
+            InstallUrl  = $Gh.InstallUrl
+            Variable    = '$Gh'
+            Description = $Gh.Description
         }
-        
-        # Cloud Platforms
-        @{ 
-            Id              = 'azure-cli'
-            Enabled         = $true
-            Name            = 'Azure CLI'
-            CommandName     = 'az'
-            TestCommand     = 'az --version'
-            InstallUrl      = $Az.InstallUrl
-            Variable        = '$Az'
-            Description     = 'Azure command-line interface'
+
+        # ------------------------------------------------------------------------------------------
+        # Language Runtimes
+        # Runtimes before their bundled package managers (npm, pip, gem depend on runtime install).
+        # ------------------------------------------------------------------------------------------
+        @{
+            Id          = $Node.Id
+            Enabled     = $Node.Enabled
+            Name        = $Node.Name
+            CommandName = $Node.CommandName
+            TestCommand = $Node.TestCommand
+            WingetId    = $Node.WingetId
+            ChocoId     = $Node.ChocoId
+            InstallUrl  = $Node.InstallUrl
+            Variable    = '$Node'
+            Description = $Node.Description
         }
-        
-        # Language Runtimes & Package Managers
-        @{ 
-            Id              = 'nodejs'
-            Enabled         = $true
-            Name            = 'Node.js'
-            CommandName     = 'node'
-            TestCommand     = 'node --version'
-            InstallUrl      = 'https://nodejs.org/en/download/'
-            Variable        = 'N/A'
-            Description     = 'JavaScript runtime (includes npm)'
+        @{
+            Id          = $Npm.Id
+            Enabled     = $Npm.Enabled
+            Name        = $Npm.Name
+            CommandName = $Npm.CommandName
+            TestCommand = $Npm.TestCommand
+            WingetId    = $Npm.WingetId
+            ChocoId     = $Npm.ChocoId
+            InstallUrl  = $Npm.InstallUrl
+            Variable    = '$Npm'
+            Description = $Npm.Description
         }
-        @{ 
-            Id              = 'npm'
-            Enabled         = $true
-            Name            = 'NPM'
-            CommandName     = 'npm'
-            TestCommand     = 'npm --version'
-            InstallUrl      = $Npm.InstallUrl
-            Variable        = '$Npm'
-            Description     = 'Node.js package manager (included with Node.js)'
+        @{
+            Id          = $Python.Id
+            Enabled     = $Python.Enabled
+            Name        = $Python.Name
+            CommandName = $Python.CommandName
+            TestCommand = $Python.TestCommand
+            WingetId    = $Python.WingetId
+            ChocoId     = $Python.ChocoId
+            InstallUrl  = $Python.InstallUrl
+            Variable    = '$Python'
+            Description = $Python.Description
         }
-        @{ 
-            Id              = 'python'
-            Enabled         = $true
-            Name            = 'Python'
-            CommandName     = 'python'
-            TestCommand     = 'python --version'
-            InstallUrl      = 'https://python.org/downloads/'
-            Variable        = 'N/A'
-            Description     = 'Python programming language (includes pip)'
+        @{
+            Id          = $Pip.Id
+            Enabled     = $Pip.Enabled
+            Name        = $Pip.Name
+            CommandName = $Pip.CommandName
+            TestCommand = $Pip.TestCommand
+            WingetId    = $Pip.WingetId
+            ChocoId     = $Pip.ChocoId
+            InstallUrl  = $Pip.InstallUrl
+            Variable    = '$Pip'
+            Description = $Pip.Description
         }
-        @{ 
-            Id              = 'pip'
-            Enabled         = $true
-            Name            = 'Pip'
-            CommandName     = 'pip'
-            TestCommand     = 'pip --version'
-            InstallUrl      = $Pip.InstallUrl
-            Variable        = '$Pip'
-            Description     = 'Python package manager (included with Python 3.4+)'
+        @{
+            Id          = $Ruby.Id
+            Enabled     = $Ruby.Enabled
+            Name        = $Ruby.Name
+            CommandName = $Ruby.CommandName
+            TestCommand = $Ruby.TestCommand
+            WingetId    = $Ruby.WingetId
+            ChocoId     = $Ruby.ChocoId
+            InstallUrl  = $Ruby.InstallUrl
+            Variable    = '$Ruby'
+            Description = $Ruby.Description
         }
-        @{ 
-            Id              = 'ruby'
-            Enabled         = $false
-            Name            = 'Ruby'
-            CommandName     = 'ruby'
-            TestCommand     = 'ruby --version'
-            InstallUrl      = 'https://rubyinstaller.org/'
-            Variable        = 'N/A'
-            Description     = 'Ruby programming language (includes gem)'
+        @{
+            Id          = $Gem.Id
+            Enabled     = $Gem.Enabled
+            Name        = $Gem.Name
+            CommandName = $Gem.CommandName
+            TestCommand = $Gem.TestCommand
+            WingetId    = $Gem.WingetId
+            ChocoId     = $Gem.ChocoId
+            InstallUrl  = $Gem.InstallUrl
+            Variable    = '$Gem'
+            Description = $Gem.Description
         }
-        @{ 
-            Id              = 'gem'
-            Enabled         = $false
-            Name            = 'RubyGems'
-            CommandName     = 'gem'
-            TestCommand     = 'gem --version'
-            InstallUrl      = $Gem.InstallUrl
-            Variable        = '$Gem'
-            Description     = 'Ruby package manager (included with Ruby)'
-        }
-        
+
+        # ------------------------------------------------------------------------------------------
         # Containers & Orchestration
-        @{ 
-            Id              = 'docker'
-            Enabled         = $true
-            Name            = 'Docker Desktop'
-            CommandName     = 'docker'
-            TestCommand     = 'docker --version'
-            InstallUrl      = 'https://docker.com/products/docker-desktop/'
-            Variable        = 'N/A'
-            Description     = 'Container platform for building and running applications'
+        # Docker before kubectl (kubectl may target local Docker Desktop cluster).
+        # kubectl before Helm (Helm requires a configured kubectl context).
+        # ------------------------------------------------------------------------------------------
+        @{
+            Id          = $Docker.Id
+            Enabled     = $Docker.Enabled
+            Name        = $Docker.Name
+            CommandName = $Docker.CommandName
+            TestCommand = $Docker.TestCommand
+            WingetId    = $Docker.WingetId
+            ChocoId     = $Docker.ChocoId
+            InstallUrl  = $Docker.InstallUrl
+            Variable    = '$Docker'
+            Description = $Docker.Description
         }
-        @{ 
-            Id              = 'kubectl'
-            Enabled         = $true
-            Name            = 'kubectl'
-            CommandName     = 'kubectl'
-            TestCommand     = 'kubectl version --client'
-            InstallUrl      = 'https://kubernetes.io/docs/tasks/tools/'
-            Variable        = 'N/A'
-            Description     = 'Kubernetes command-line tool'
+        @{
+            Id          = $Kubectl.Id
+            Enabled     = $Kubectl.Enabled
+            Name        = $Kubectl.Name
+            CommandName = $Kubectl.CommandName
+            TestCommand = $Kubectl.TestCommand
+            WingetId    = $Kubectl.WingetId
+            ChocoId     = $Kubectl.ChocoId
+            InstallUrl  = $Kubectl.InstallUrl
+            Variable    = '$Kubectl'
+            Description = $Kubectl.Description
         }
-        @{ 
-            Id              = 'helm'
-            Enabled         = $true
-            Name            = 'Helm'
-            CommandName     = 'helm'
-            TestCommand     = 'helm version'
-            InstallUrl      = 'https://helm.sh/docs/intro/install/'
-            Variable        = 'N/A'
-            Description     = 'Kubernetes package manager'
+        @{
+            Id          = $Helm.Id
+            Enabled     = $Helm.Enabled
+            Name        = $Helm.Name
+            CommandName = $Helm.CommandName
+            TestCommand = $Helm.TestCommand
+            WingetId    = $Helm.WingetId
+            ChocoId     = $Helm.ChocoId
+            InstallUrl  = $Helm.InstallUrl
+            Variable    = '$Helm'
+            Description = $Helm.Description
         }
-        
+
+        # ------------------------------------------------------------------------------------------
         # Infrastructure as Code
-        @{ 
-            Id              = 'terraform'
-            Enabled         = $true
-            Name            = 'Terraform'
-            CommandName     = 'terraform'
-            TestCommand     = 'terraform --version'
-            InstallUrl      = 'https://developer.hashicorp.com/terraform/install'
-            Variable        = 'N/A'
-            Description     = 'Infrastructure as Code tool'
+        # ------------------------------------------------------------------------------------------
+        @{
+            Id          = $Terraform.Id
+            Enabled     = $Terraform.Enabled
+            Name        = $Terraform.Name
+            CommandName = $Terraform.CommandName
+            TestCommand = $Terraform.TestCommand
+            WingetId    = $Terraform.WingetId
+            ChocoId     = $Terraform.ChocoId
+            InstallUrl  = $Terraform.InstallUrl
+            Variable    = '$Terraform'
+            Description = $Terraform.Description
         }
-        @{ 
-            Id              = 'pulumi'
-            Enabled         = $true
-            Name            = 'Pulumi'
-            CommandName     = 'pulumi'
-            TestCommand     = 'pulumi version'
-            InstallUrl      = 'https://pulumi.com/docs/install/'
-            Variable        = 'N/A'
-            Description     = 'Modern Infrastructure as Code platform'
+        @{
+            Id          = $Pulumi.Id
+            Enabled     = $Pulumi.Enabled
+            Name        = $Pulumi.Name
+            CommandName = $Pulumi.CommandName
+            TestCommand = $Pulumi.TestCommand
+            WingetId    = $Pulumi.WingetId
+            ChocoId     = $Pulumi.ChocoId
+            InstallUrl  = $Pulumi.InstallUrl
+            Variable    = '$Pulumi'
+            Description = $Pulumi.Description
         }
-        
-        # Development Environments
-        @{ 
-            Id              = 'wsl'
-            Enabled         = $true
-            Name            = 'WSL (Windows Subsystem for Linux)'
-            CommandName     = 'wsl'
-            TestCommand     = 'wsl --version'
-            InstallUrl      = 'https://learn.microsoft.com/en-us/windows/wsl/install'
-            Variable        = '$Wsl'
-            Description     = 'Run Linux environment on Windows'
-        }
-        @{ 
-            Id              = 'powershell-core'
-            Enabled         = $true
-            Name            = 'PowerShell Core'
-            CommandName     = 'pwsh'
-            TestCommand     = 'pwsh --version'
-            InstallUrl      = 'https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell'
-            Variable        = 'N/A'
-            Description     = 'Cross-platform PowerShell'
+
+        # ------------------------------------------------------------------------------------------
+        # Cloud Platforms
+        # ------------------------------------------------------------------------------------------
+        @{
+            Id          = $Az.Id
+            Enabled     = $Az.Enabled
+            Name        = $Az.Name
+            CommandName = $Az.CommandName
+            TestCommand = $Az.TestCommand
+            WingetId    = $Az.WingetId
+            ChocoId     = $Az.ChocoId
+            InstallUrl  = $Az.InstallUrl
+            Variable    = '$Az'
+            Description = $Az.Description
         }
     )
 }

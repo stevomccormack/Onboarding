@@ -4,8 +4,8 @@
 
 # ------------------------------------------------------------------------------------------------
 
-Write-MastHead "Git Initialisation"
-Write-Status "Configuring projects..."
+Write-MastHead "Git Config (Global)"
+Write-Status "Configuring git global settings..."
 
 # ------------------------------------------------------------------------------------------------
 
@@ -23,14 +23,31 @@ git config --global rerere.enabled $GitConfig.RerereEnabled
 
 # ------------------------------------------------------------------------------------------------
 
+# Safe directories
 $Projects.PSObject.Properties.Value | ForEach-Object {
     $project = $_
 
-    # Safe directories
     $existingSafeDirs = git config --global --get-all safe.directory 2>$null
     if ($existingSafeDirs -notcontains $project.LocalPath) {
         git config --global --add safe.directory $project.LocalPath
         Write-OkMessage -Title "Git Config" -Message "Added safe.directory: $($project.LocalPath)"
+    }
+}
+
+# ------------------------------------------------------------------------------------------------
+
+# Per-repo user identity (--local takes precedence over --global)
+$Projects.PSObject.Properties.Value | ForEach-Object {
+    $project = $_
+
+    if (Test-Path (Join-Path $project.LocalPath '.git')) {
+        Push-Location $project.LocalPath
+        if ($project.UserName) { git config --local user.name  $project.UserName }
+        if ($project.UserEmail) { git config --local user.email $project.UserEmail }
+        Pop-Location
+    }
+    else {
+        Write-WarnMessage -Title $project.Name -Message "Repo not found at $($project.LocalPath) — skipping local identity config"
     }
 }
 
@@ -47,8 +64,21 @@ Write-Var -Name "git --global config push.autoSetupRemote" -Value (git config --
 Write-Var -Name "git --global config rebase.autoStash" -Value (git config --global rebase.autoStash) -NoIcon
 Write-Var -Name "git --global config rerere.enabled" -Value (git config --global rerere.enabled) -NoIcon
 Write-NewLine
-Write-Host "git config --global --get-all safe.directory:`n" -ForegroundColor Green -NoNewLine
-git config --global --get-all safe.directory | ForEach-Object { Write-Host "- $_" }
+
+Write-Host "git config --global --get-all safe.directory:`n" -ForegroundColor Cyan -NoNewLine
+git config --global --get-all safe.directory | ForEach-Object { Write-Host " + $_" }
+Write-NewLine
+
+Write-Host "git config --local user.name / user.email (per project):`n" -ForegroundColor Cyan -NoNewLine
+$Projects.PSObject.Properties.Value | ForEach-Object {
+    if (Test-Path (Join-Path $_.LocalPath '.git')) {
+        Push-Location $_.LocalPath
+        $localName = git config --local user.name  2>$null
+        $localEmail = git config --local user.email 2>$null
+        Write-Host " + $($_.Name): $localName <$localEmail>"
+        Pop-Location
+    }
+}
 Write-NewLine
 
 

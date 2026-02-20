@@ -22,37 +22,45 @@ $gemDocsUrl = 'https://guides.rubygems.org/'
 $gemPackagesUrl = 'https://rubygems.org/'
 
 $Gem = [pscustomobject]@{
-    InstallUrl          = $gemInstallUrl               # Ruby installation (includes RubyGems)
-    DocsUrl             = $gemDocsUrl                  # RubyGems documentation
-    PackagesUrl         = $gemPackagesUrl              # Package registry
+    Id          = 'gem'
+    Enabled     = $false                           # Enable gem (included with Ruby)
+    Name        = 'RubyGems'
+    CommandName = 'gem'
+    TestCommand = 'gem --version'
+    Description = 'Ruby package manager (included with Ruby)'
+    WingetId    = $null                            # Bundled with Ruby — no separate install
+    ChocoId     = $null                            # Bundled with Ruby — no separate install
+    InstallUrl  = $gemInstallUrl               # Ruby installation (includes RubyGems)
+    DocsUrl     = $gemDocsUrl                  # RubyGems documentation
+    PackagesUrl = $gemPackagesUrl              # Package registry
     
     # Gem Configuration Settings
-    NoDocument          = $true                        # Skip documentation installation
-    Quiet               = $false                       # Quiet output
-    Verbose             = $false                       # Verbose output
-    Force               = $false                       # Force installation
+    NoDocument  = $true                        # Skip documentation installation
+    Quiet       = $false                       # Quiet output
+    Verbose     = $false                       # Verbose output
+    Force       = $false                       # Force installation
     
-    Packages = @(
+    Packages    = @(
         # Web Frameworks
-        @{ Id = 'rails';                  Enabled = $false; Name = 'Ruby on Rails';                CommandName = 'rails';         TestCommand = 'rails --version';                    Url = 'https://rubygems.org/gems/rails' }
-        @{ Id = 'sinatra';                Enabled = $false; Name = 'Sinatra';                      CommandName = 'ruby';          TestCommand = 'ruby -e "require ''sinatra/version''; puts Sinatra::VERSION"'; Url = 'https://rubygems.org/gems/sinatra' }
+        @{ Id = 'rails'; Enabled = $false; Name = 'Ruby on Rails'; CommandName = 'rails'; TestCommand = 'rails --version'; Url = 'https://rubygems.org/gems/rails' }
+        @{ Id = 'sinatra'; Enabled = $false; Name = 'Sinatra'; CommandName = 'ruby'; TestCommand = 'ruby -e "require ''sinatra/version''; puts Sinatra::VERSION"'; Url = 'https://rubygems.org/gems/sinatra' }
         
         # Static Site Generators
-        @{ Id = 'jekyll';                 Enabled = $false; Name = 'Jekyll';                       CommandName = 'jekyll';        TestCommand = 'jekyll --version';                   Url = 'https://rubygems.org/gems/jekyll' }
-        @{ Id = 'middleman';              Enabled = $false; Name = 'Middleman';                    CommandName = 'middleman';     TestCommand = 'middleman version';                  Url = 'https://rubygems.org/gems/middleman' }
+        @{ Id = 'jekyll'; Enabled = $false; Name = 'Jekyll'; CommandName = 'jekyll'; TestCommand = 'jekyll --version'; Url = 'https://rubygems.org/gems/jekyll' }
+        @{ Id = 'middleman'; Enabled = $false; Name = 'Middleman'; CommandName = 'middleman'; TestCommand = 'middleman version'; Url = 'https://rubygems.org/gems/middleman' }
         
         # DevOps & Infrastructure
-        @{ Id = 'chef';                   Enabled = $false; Name = 'Chef';                         CommandName = 'chef';          TestCommand = 'chef --version';                     Url = 'https://rubygems.org/gems/chef' }
-        @{ Id = 'puppet';                 Enabled = $false; Name = 'Puppet';                       CommandName = 'puppet';        TestCommand = 'puppet --version';                   Url = 'https://rubygems.org/gems/puppet' }
+        @{ Id = 'chef'; Enabled = $false; Name = 'Chef'; CommandName = 'chef'; TestCommand = 'chef --version'; Url = 'https://rubygems.org/gems/chef' }
+        @{ Id = 'puppet'; Enabled = $false; Name = 'Puppet'; CommandName = 'puppet'; TestCommand = 'puppet --version'; Url = 'https://rubygems.org/gems/puppet' }
         
         # Package Management
-        @{ Id = 'bundler';                Enabled = $false; Name = 'Bundler';                      CommandName = 'bundle';        TestCommand = 'bundle --version';                   Url = 'https://rubygems.org/gems/bundler' }
+        @{ Id = 'bundler'; Enabled = $false; Name = 'Bundler'; CommandName = 'bundle'; TestCommand = 'bundle --version'; Url = 'https://rubygems.org/gems/bundler' }
         
         # Code Quality
-        @{ Id = 'rubocop';                Enabled = $false; Name = 'RuboCop';                      CommandName = 'rubocop';       TestCommand = 'rubocop --version';                  Url = 'https://rubygems.org/gems/rubocop' }
+        @{ Id = 'rubocop'; Enabled = $false; Name = 'RuboCop'; CommandName = 'rubocop'; TestCommand = 'rubocop --version'; Url = 'https://rubygems.org/gems/rubocop' }
         
         # Testing
-        @{ Id = 'rspec';                  Enabled = $false; Name = 'RSpec';                        CommandName = 'rspec';         TestCommand = 'rspec --version';                    Url = 'https://rubygems.org/gems/rspec' }
+        @{ Id = 'rspec'; Enabled = $false; Name = 'RSpec'; CommandName = 'rspec'; TestCommand = 'rspec --version'; Url = 'https://rubygems.org/gems/rspec' }
     )
 }
 

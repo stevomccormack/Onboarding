@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-SshPreflight {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # SshProfile:
         # SSH profile object (currently unused but kept for future validations).

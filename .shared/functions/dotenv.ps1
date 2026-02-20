@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function Import-DotEnv {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Path:
         # Path to the .env file to load.
@@ -18,7 +19,7 @@ function Import-DotEnv {
         # Scope:
         # Target scope to set variables in: Process, User, or Machine.
         [Parameter()]
-        [ValidateSet('Process','User','Machine')]
+        [ValidateSet('Process', 'User', 'Machine')]
         [string]$Scope = 'User',
 
         # Force:
@@ -48,7 +49,7 @@ function Import-DotEnv {
             if (-not $line -or $line.StartsWith('#')) { continue }
             if ($line -notmatch '^\s*([^=]+?)\s*=\s*(.*)\s*$') { continue }
 
-            $name  = $matches[1].Trim().Trim([char]0xFEFF)
+            $name = $matches[1].Trim().Trim([char]0xFEFF)
             $value = $matches[2].Trim()
 
             if (($value.Length -ge 2) -and ((($value.StartsWith("'") -and $value.EndsWith("'"))) -or (($value.StartsWith('"') -and $value.EndsWith('"'))))) {

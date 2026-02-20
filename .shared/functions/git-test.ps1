@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-GitRepositoryIsInitialized {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # Path:
         # Path to the directory to check. Defaults to current directory if not specified.
@@ -49,6 +50,7 @@ function Test-GitRepositoryIsInitialized {
 # ------------------------------------------------------------------------------------------------
 function Test-GitRepositoryExists {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # RepositoryUrl:
         # Git repository URL (HTTPS or SSH format).
@@ -60,7 +62,7 @@ function Test-GitRepositoryExists {
         # Timeout:
         # Connection timeout in seconds (default 10).
         [Parameter()]
-        [ValidateRange(1,120)]
+        [ValidateRange(1, 120)]
         [int]$Timeout = 10
     )
 
@@ -112,6 +114,7 @@ function Test-GitRepositoryExists {
 # ------------------------------------------------------------------------------------------------
 function Test-EnsureGitRepository {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # Owner:
         # Repository owner (username or organization).
@@ -178,23 +181,23 @@ function Test-EnsureGitRepository {
     if ($Description) { Write-Var -Name "Description" -Value $Description -NoIcon }
 
     try {
-        $args = @('repo', 'create', $fullName)
+        $ghArgs = @('repo', 'create', $fullName)
         
         if ($IsPrivate) {
-            $args += '--private'
+            $ghArgs += '--private'
         }
         else {
-            $args += '--public'
+            $ghArgs += '--public'
         }
 
         if ($Description) {
-            $args += '--description'
-            $args += $Description
+            $ghArgs += '--description'
+            $ghArgs += $Description
         }
 
-        Write-Host "gh $($args -join ' ')" -ForegroundColor Cyan
+        Write-Host "gh $($ghArgs -join ' ')" -ForegroundColor Cyan
 
-        $output = & gh @args 2>&1
+        $output = & gh @ghArgs 2>&1
         $exit = $LASTEXITCODE
 
         if ($exit -eq 0) {

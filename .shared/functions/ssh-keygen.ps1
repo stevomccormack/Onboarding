@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function New-SshKey {
     [CmdletBinding()]
+    [OutputType([bool])]
     param (
         # KeyFilePath:
         # Full path to the private key file to create (public key will be "$KeyFilePath.pub").
@@ -18,13 +19,13 @@ function New-SshKey {
         # KeyType:
         # Key type to generate: ed25519 or rsa.
         [Parameter()]
-        [ValidateSet('ed25519','rsa')]
+        [ValidateSet('ed25519', 'rsa')]
         [string]$KeyType = 'ed25519',
 
         # KeyBits:
         # RSA key size (only used when KeyType = 'rsa').
         [Parameter()]
-        [ValidateRange(1024,8192)]
+        [ValidateRange(1024, 8192)]
         [int]$KeyBits = 4096,
 
         # KeyComment:
@@ -95,7 +96,7 @@ function New-SshKey {
     if ($Force.IsPresent) {
         Write-StatusMessage -Title "SSH KeyGen" -Message "Force enabled; removing existing key files"
         if (Test-Path -LiteralPath $keyFilePathClean) { Remove-Item -LiteralPath $keyFilePathClean -Force -ErrorAction SilentlyContinue | Out-Null }
-        if (Test-Path -LiteralPath $publicKeyPath)    { Remove-Item -LiteralPath $publicKeyPath    -Force -ErrorAction SilentlyContinue | Out-Null }
+        if (Test-Path -LiteralPath $publicKeyPath) { Remove-Item -LiteralPath $publicKeyPath    -Force -ErrorAction SilentlyContinue | Out-Null }
     }
 
     $argsList = @('-t', $KeyType, '-C', $commentClean, '-f', $keyFilePathClean, '-N', $KeyPassphrase)
@@ -109,7 +110,7 @@ function New-SshKey {
 
     try {
         $output = & ssh-keygen @argsList 2>&1
-        $exit   = $LASTEXITCODE
+        $exit = $LASTEXITCODE
 
         if ($exit -ne 0) {
             Write-FailMessage -Title "ssh-keygen failed" -Message "Exit $exit"

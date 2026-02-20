@@ -5,13 +5,7 @@
 # ------------------------------------------------------------------------------------------------
 
 Write-MastHead ".NET Global Tools"
-
-# ------------------------------------------------------------------------------------------------
-# List Current Tools
-# ------------------------------------------------------------------------------------------------
-
-Write-Header "Installed Global Tools"
-dotnet tool list --global
+Write-Status "Installing .NET global tools..."
 
 # ------------------------------------------------------------------------------------------------
 # Install Tools
@@ -23,17 +17,16 @@ dotnet tool list --global
 # ------------------------------------------------------------------------------------------------
 
 if ($DotNet.Tools.Count -eq 0) {
-    Write-InfoMessage -Title "Tools" -Message "No tools configured"
+    Write-InfoMessage -Title ".NET Tools" -Message "No tools configured"
 }
 else {
     $existingTools = dotnet tool list --global 2>$null
 
     foreach ($tool in $DotNet.Tools) {
-        Write-Header "Installing: $tool"
 
         # Check if tool already exists by name
         if ($existingTools -match [regex]::Escape($tool)) {
-            Write-InfoMessage -Title $tool -Message "Already installed"
+            Write-OkMessage -Title $tool -Message "Already installed"
             continue
         }
 
@@ -52,5 +45,5 @@ else {
 # List Updated Tools
 # ------------------------------------------------------------------------------------------------
 
-Write-Header "Updated Tools List"
+Write-StatusHeader ".NET Global Tools:"
 dotnet tool list --global

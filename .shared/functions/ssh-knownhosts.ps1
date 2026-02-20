@@ -7,6 +7,7 @@
 # ------------------------------------------------------------------------------------------------
 function Test-EnsureSshKnownHosts {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # SshRootPath:
         # Root SSH directory path (e.g. C:\Users\me\.ssh). If empty, $HOME\.ssh is used.
@@ -52,6 +53,7 @@ function Test-EnsureSshKnownHosts {
 # ------------------------------------------------------------------------------------------------
 function New-SshKnownHostKey {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # HostName:
         # Host to scan/learn (e.g. 'github.com', 'ssh.dev.azure.com').
@@ -62,7 +64,7 @@ function New-SshKnownHostKey {
         # Port:
         # SSH port to scan/connect (default 22).
         [Parameter()]
-        [ValidateRange(1,65535)]
+        [ValidateRange(1, 65535)]
         [int]$Port = 22,
 
         # KnownHostsPath:
@@ -106,7 +108,7 @@ function New-SshKnownHostKey {
 
         try {
             $scanOut = & ssh-keyscan -p $Port $hostClean 2>&1
-            $exit    = $LASTEXITCODE
+            $exit = $LASTEXITCODE
             $scanTxt = ($scanOut | Out-String).Trim()
 
             if ($exit -eq 0 -and -not [string]::IsNullOrWhiteSpace($scanTxt)) {

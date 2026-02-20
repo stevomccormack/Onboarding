@@ -26,6 +26,9 @@ class Project {
     [bool]$FastForward
     [bool]$UseRebase
 
+    # Metadata
+    [string[]]$Tags
+
     Project() {}
 
     Project(
@@ -45,7 +48,8 @@ class Project {
         [string]$Origin,
         [string]$MainBranch,
         [bool]$FastForward,
-        [bool]$UseRebase
+        [bool]$UseRebase,
+        [string[]]$Tags
     ) {
         $this.Provider = $Provider
         $this.Name = $Name
@@ -66,6 +70,9 @@ class Project {
         $this.MainBranch = $MainBranch
         $this.FastForward = $FastForward
         $this.UseRebase = $UseRebase
+
+        # Metadata
+        $this.Tags = if ($Tags) { $Tags } else { @() }
     }
 }
 
@@ -175,7 +182,13 @@ function New-Project {
         # Use rebase instead of merge during pull (git config pull.rebase).
         # $true = rebase, $false = merge
         [Parameter()]
-        [bool]$UseRebase = $false
+        [bool]$UseRebase = $false,
+
+        # Tags:
+        # Optional metadata tags for grouping/filtering projects.
+        # Example: @('dotnet'), @('dotnet', 'api'), @('node', 'frontend')
+        [Parameter()]
+        [string[]]$Tags = @()
     )
 
     # Guards
@@ -237,7 +250,8 @@ function New-Project {
         $origin,
         $MainBranch,
         $FastForward,
-        $UseRebase
+        $UseRebase,
+        $Tags
     )
 }
 
@@ -311,7 +325,13 @@ function New-GitHubProject {
         # UseRebase:
         # Use rebase instead of merge during pull.
         [Parameter()]
-        [bool]$UseRebase = $false
+        [bool]$UseRebase = $false,
+
+        # Tags:
+        # Optional metadata tags for grouping/filtering projects.
+        # Example: @('dotnet'), @('dotnet', 'api'), @('node', 'frontend')
+        [Parameter()]
+        [string[]]$Tags = @()
     )
 
     # Guards
@@ -334,7 +354,7 @@ function New-GitHubProject {
     return New-Project -Provider ([GitProvider]::GitHub) -Name $nameClean -Description $Description -Owner $ownerClean -Repository $repoClean `
         -HttpsUrl $httpsUrl -SshUrl $sshUrl -WebUrl $webUrl -GitUrl $gitUrl `
         -LocalPath $LocalPath -UserName $UserName -UserEmail $UserEmail `
-        -MainBranch $MainBranch -FastForward $FastForward -UseRebase $UseRebase
+        -MainBranch $MainBranch -FastForward $FastForward -UseRebase $UseRebase -Tags $Tags
 }
 
 # ------------------------------------------------------------------------------------------------
@@ -414,7 +434,13 @@ function New-AzureDevOpsProject {
         # UseRebase:
         # Use rebase instead of merge during pull.
         [Parameter()]
-        [bool]$UseRebase = $false
+        [bool]$UseRebase = $false,
+
+        # Tags:
+        # Optional metadata tags for grouping/filtering projects.
+        # Example: @('dotnet'), @('dotnet', 'api'), @('node', 'frontend')
+        [Parameter()]
+        [string[]]$Tags = @()
     )
 
     # Guards
@@ -440,7 +466,7 @@ function New-AzureDevOpsProject {
     return New-Project -Provider ([GitProvider]::AzureDevOps) -Name $nameClean -Description $Description -Owner $orgClean -Repository $repoClean `
         -HttpsUrl $httpsUrl -SshUrl $sshUrl -WebUrl $webUrl -GitUrl $gitUrl `
         -LocalPath $LocalPath -UserName $UserName -UserEmail $UserEmail `
-        -MainBranch $MainBranch -FastForward $FastForward -UseRebase $UseRebase
+        -MainBranch $MainBranch -FastForward $FastForward -UseRebase $UseRebase -Tags $Tags
 }
 
 # ------------------------------------------------------------------------------------------------

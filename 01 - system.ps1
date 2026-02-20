@@ -111,6 +111,7 @@ foreach ($gpu in $gpus) {
     Write-Var -Name "GPU Current Bits Per Pixel" -Value $gpu.CurrentBitsPerPixel
     Write-Var -Name "GPU Status" -Value $gpu.Status
 }
+# nvidia-smi
 
 # ------------------------------------------------------------------------------
 # Memory (RAM) Information

@@ -8,6 +8,7 @@
 # ------------------------------------------------------------------------------------------------
 function New-GitSafeDirectory {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Path:
         # Directory path to add to safe.directory configuration.
@@ -97,6 +98,7 @@ function New-GitSafeDirectory {
 # ------------------------------------------------------------------------------------------------
 function Remove-GitSafeDirectory {
     [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([bool])]
     param (
         # Path:
         # Directory path to remove from safe.directory configuration.
@@ -172,6 +174,7 @@ function Remove-GitSafeDirectory {
 # ------------------------------------------------------------------------------------------------
 function Get-GitSafeDirectories {
     [CmdletBinding()]
+    [OutputType([string[]])]
     param (
         # Scope:
         # Git configuration scope (local, global, system, or 'all' for all scopes).

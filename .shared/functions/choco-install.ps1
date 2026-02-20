@@ -9,6 +9,7 @@
 # ------------------------------------------------------------------------------------------------
 function New-DownloadChocoInstallScript {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # DownloadUrl:
         # URL to download the Chocolatey install script from.
@@ -119,6 +120,7 @@ function New-DownloadChocoInstallScript {
 # ------------------------------------------------------------------------------------------------
 function Install-Chocolatey {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         # Force:
         # Force reinstallation even if Chocolatey is already installed.
@@ -168,7 +170,7 @@ function Install-Chocolatey {
             Write-OkMessage -Title "Chocolatey" -Message "Successfully installed"
             
             # Refresh environment to make choco available
-            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
             
             # Verify installation
             $chocoExists = Get-Command -Name 'choco' -ErrorAction SilentlyContinue

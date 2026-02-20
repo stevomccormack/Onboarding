@@ -4,14 +4,7 @@
 
 # ------------------------------------------------------------------------------------------------
 
-Write-MastHead ".NET NuGet Sources"
-
-# ------------------------------------------------------------------------------------------------
-# List Current Sources
-# ------------------------------------------------------------------------------------------------
-
-Write-Header "Current NuGet Sources"
-dotnet nuget list source
+Write-MastHead ".NET: NuGet Sources"
 
 # ------------------------------------------------------------------------------------------------
 # Add Custom Sources
@@ -40,11 +33,10 @@ else {
     $existingSources = dotnet nuget list source 2>$null
 
     foreach ($src in $DotNet.NugetSources) {
-        Write-Header "Configuring: $($src.Name)"
 
         # Check if source already exists by name
         if ($existingSources -match [regex]::Escape($src.Name)) {
-            Write-InfoMessage -Title $src.Name -Message "Already registered"
+            Write-OkMessage -Title $src.Name -Message "Already registered"
         }
         else {
             dotnet nuget add source $src.Source --name $src.Name
@@ -63,5 +55,5 @@ else {
 # List Updated Sources
 # ------------------------------------------------------------------------------------------------
 
-Write-Header "Updated NuGet Sources"
+Write-StatusHeader "List NuGet Sources"
 dotnet nuget list source
